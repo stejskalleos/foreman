@@ -200,5 +200,39 @@ class Api::V2::ProvisioningTemplatesControllerTest < ActionController::TestCase
       get :global_registration
       assert_response :internal_server_error
     end
+
+    test "should pass permitted params to template" do
+      params = {
+        organization_id: taxonomies(:organization1).id,
+        location_id: taxonomies(:location1).id,
+        hostgroup_id: hostgroups(:common).id,
+      }
+
+      get :global_registration, params: params, session: set_session_user
+      assert_response :success
+
+      vars = assigns(:global_registration_vars)
+      assert_equal taxonomies(:organization1), vars[:organization]
+      assert_equal taxonomies(:location1), vars[:location]
+      assert_equal hostgroups(:common), vars[:hostgroup]
+      assert_equal users(:admin), vars[:user]
+    end
+
+    test "should not pass unpermitted params to template" do
+      params = {
+        not_allowed: 'something_not_allowed',
+      }
+
+      get :global_registration, params: params, session: set_session_user
+      assert_response :success
+      assert_nil assigns(:global_registration_vars)[:not_allowed]
+    end
+
+    test "should allow to extend permitted params" do
+      Foreman::Plugin.any_instance.stubs(:allowed_registration_vars).returns([:activation_key])
+      get :global_registration, params: { activation_key: 'one-two-three-key' }, session: set_session_user
+      assert_response :success
+      assert_equal 'one-two-three-key', assigns(:global_registration_vars)[:activation_key]
+    end
   end
 end

@@ -3,8 +3,46 @@ kind: registration
 name: Global Registration
 model: ProvisioningTemplate
 -%>
+#!/bin/sh
+<%
+    curl_headers = ["-H 'Content-Type: application/json'", "-H 'Accept: application/json'", "-H 'Authorization: Bearer #{@auth_token}'"]
+    curl_vars = { headers: curl_headers, organization: @organization, location: @location, hostgroup: @hostgroup }
+%>
+
+# Template parameters:
+<%= "#  - User: [#{@user.login}]" if @user %>
+<%= "#  - Organization: [#{@organization.name}]" if @organization %>
+<%= "#  - Location: [#{@location.name}]" if @location %>
+<%= "#  - Hostgroup: [#{@hostgroup.name}]" if @hostgroup %>
 
 if ! [ $(id -u) = 0 ]; then
     echo "Please run as root"
     exit 1
+fi
+
+if [ -f /etc/os-release ] ; then
+  . /etc/os-release
+fi
+
+echo "#"
+echo "# Running registration"
+echo "# Hostname: $HOSTNAME"
+echo "# OS: $NAME"
+echo "#"
+
+if [ $ID = rhel ] ; then
+<% if plugin_present?('katello') %>
+    CONSUMER_RPM=$(mktemp --suffix .rpm)
+
+    curl --insecure --output $CONSUMER_RPM <%= subscription_manager_configuration_url %>
+    yum localinstall $CONSUMER_RPM -y
+    yum install subscription-manager -y
+    subscription-manager register --org=<%= @organization.label %> --activationkey="sample-key"
+
+    rm -f $CONSUMER_RPM
+<% else %>
+    <%= snippet 'create_host_curl', variables: curl_vars %>
+<% end %>
+else
+    <%= snippet 'create_host_curl', variables: curl_vars %>
 fi
