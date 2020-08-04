@@ -12,8 +12,7 @@ module SSO
       user = User.unscoped.except_hidden.find_by(id: user_id) if user_id
 
       @current_user = user
-      @jwt_scope = payload['scope'] || [:create_hosts]
-      # @jwt_scope = payload['scope'] || []
+      @jwt_scope = payload['scope'] || []
 
       user&.login
     rescue JWT::ExpiredSignature
