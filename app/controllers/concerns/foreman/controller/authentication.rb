@@ -40,7 +40,12 @@ module Foreman::Controller::Authentication
   end
 
   def authorized
-    User.current.allowed_to?(path_to_authenticate)
+    sso = @available_sso
+    if sso.is_a?(SSO::Jwt) && sso&.scope_defined?
+      sso.allowed_to?(path_to_authenticate)
+    else
+      User.current.allowed_to?(path_to_authenticate)
+    end
   end
 
   def path_to_authenticate

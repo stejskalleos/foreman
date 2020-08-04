@@ -1,6 +1,6 @@
 module SSO
   class Jwt < Base
-    attr_reader :current_user
+    attr_reader :current_user, :jwt_scope
 
     def available?
       controller.api_request? && bearer_token_set? && no_issuer?
@@ -10,7 +10,11 @@ module SSO
       payload = jwt_token.decode || {}
       user_id = payload['user_id']
       user = User.unscoped.except_hidden.find_by(id: user_id) if user_id
+
       @current_user = user
+      @jwt_scope = payload['scope'] || [:create_hosts]
+      # @jwt_scope = payload['scope'] || []
+
       user&.login
     rescue JWT::ExpiredSignature
       Rails.logger.error "JWT SSO: Expired JWT token."
@@ -22,6 +26,23 @@ module SSO
 
     def authenticated?
       self.user = User.current.presence || authenticate!
+    end
+
+    def scope_defined?
+      @jwt_scope.any?
+    end
+
+    def allowed_to?(action)
+      return false if @current_user.disabled?
+      return true if @current_user.admin?
+
+      required_permissions = Foreman::AccessControl.permissions_for_controller_action(action).map(&:name)
+
+      required_permissions.each do |permission|
+        return false unless @jwt_scope.include? permission
+      end
+
+      true
     end
 
     private
