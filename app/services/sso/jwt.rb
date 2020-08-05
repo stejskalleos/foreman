@@ -36,9 +36,8 @@ module SSO
       return true if @current_user.admin?
 
       required_permissions = Foreman::AccessControl.permissions_for_controller_action(action).map(&:name)
-
       required_permissions.each do |permission|
-        return false unless @jwt_scope.include? permission
+        return false unless @jwt_scope.include? permission.to_s
       end
 
       true

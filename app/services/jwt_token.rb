@@ -10,7 +10,7 @@ class JwtToken < Struct.new(:token)
 
     private
 
-    def prepare_payload(user, secret, expiration:, scope:)
+    def prepare_payload(user, secret, expiration, scope)
       jti_raw = [secret, iat].join(':')
       jti = Digest::SHA256.hexdigest(jti_raw)
       payload = {
