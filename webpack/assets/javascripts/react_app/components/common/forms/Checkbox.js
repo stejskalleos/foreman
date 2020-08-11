@@ -4,13 +4,14 @@ import PropTypes from 'prop-types';
 import { noop } from '../../../common/helpers';
 import CommonForm from './CommonForm';
 
-const Checkbox = ({ className, checked, onChange, label, disabled }) => (
+const Checkbox = ({ className, checked, onChange, label, disabled, tabIndex }) => (
   <CommonForm label={label} className={`common-checkbox ${className}`}>
     <input
       disabled={disabled}
       type="checkbox"
       checked={checked}
       onChange={onChange}
+      tabIndex={tabIndex}
     />
   </CommonForm>
 );
@@ -21,6 +22,7 @@ Checkbox.propTypes = {
   label: PropTypes.string,
   disabled: PropTypes.bool,
   onChange: PropTypes.func,
+  tabIndex: PropTypes.number,
 };
 
 Checkbox.defaultProps = {
@@ -29,6 +31,7 @@ Checkbox.defaultProps = {
   label: '',
   disabled: false,
   onChange: noop,
+  tabIndex: null,
 };
 
 export default Checkbox;

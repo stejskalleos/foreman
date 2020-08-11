@@ -372,6 +372,7 @@ Foreman::Application.routes.draw do
     resources :provisioning_templates, :only => [] do
       collection do
         get 'build_pxe_default'
+        get 'global_registration'
       end
     end
 

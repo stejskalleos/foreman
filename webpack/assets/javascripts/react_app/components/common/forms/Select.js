@@ -53,6 +53,7 @@ class Select extends React.Component {
       disabled,
       status = STATUS.RESOLVED,
       errorMessage = __('An error occured.'),
+      tabIndex,
     } = this.props;
 
     let content;
@@ -68,6 +69,7 @@ class Select extends React.Component {
           className="form-control"
           value={value}
           onChange={onChange}
+          tabIndex={tabIndex}
         >
           <option />
           {renderOptions(options)}
@@ -116,6 +118,7 @@ Select.propTypes = {
   errorMessage: PropTypes.string,
   onChange: PropTypes.func,
   useSelect2: PropTypes.bool,
+  tabIndex: PropTypes.number,
 };
 
 Select.defaultProps = {
@@ -130,6 +133,7 @@ Select.defaultProps = {
   errorMessage: __('An error occured.'),
   onChange: noop,
   useSelect2: true,
+  tabIndex: 0,
 };
 
 export default Select;

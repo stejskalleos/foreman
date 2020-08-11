@@ -1,0 +1,14 @@
+<% title _("Global registration template") %>
+
+<% props = {
+  organizations: @organizations,
+  locations: @locations,
+  hostGroups: @host_groups,
+  pluginParams: @plugin_params,
+}
+%>
+
+<div id="grt_form">
+<%# TODO: Use react_component only %>
+<%= mount_react_component('GlobalRegistration', '#grt_form', props.to_json) %>
+</div>
