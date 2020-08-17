@@ -20,6 +20,19 @@ set -e
 <%= snippet 'puppet_setup' %>
 <% end -%>
 
+<% if host_param_true?('host_registration_insights') %>
+echo '#'
+echo '# Installing Insights client'
+echo '#'
+
+yum install insights-client
+insights-client --register
+<% end %>
+
+<% if host_param_true?('host_registration_rex') %>
+<%= snippet 'remote_execution_ssh_keys'  %>
+<% end %>
+
 # Call home to exit build mode
 
 curl -o /dev/null --noproxy \* '<%= foreman_url('built') %>'
