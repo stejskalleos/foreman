@@ -48,8 +48,9 @@ module Foreman::Controller::ProvisioningTemplates
     permitted = Foreman::Plugin.all
                                .map(&:allowed_registration_vars)
                                .flatten.compact.uniq
-    organization = params['organization_id'].present? ? Organization.authorized(:view_organizations).find(params['organization_id']) : Organization.current
-    location = params['location_id'].present? ? Location.authorized(:view_locations).find(params['location_id']) : Location.current
+
+    organization = Organization.authorized(:view_organizations).find(params['organization_id']) if params['organization_id'].present?
+    location = Location.authorized(:view_locations).find(params['location_id']) if params['location_id'].present?
     host_group = Hostgroup.authorized(:view_hostgroups).find(params['hostgroup_id']) if params["hostgroup_id"].present?
 
     {

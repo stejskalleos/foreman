@@ -18,7 +18,9 @@ class JwtToken < Struct.new(:token)
         iat: iat,
         jti: jti,
       }
-      expiration ? payload.merge(exp: Time.now.to_i + expiration) : payload
+
+      payload[:exp] = (Time.now.to_i + expiration) if expiration
+      payload
     end
 
     def iat
