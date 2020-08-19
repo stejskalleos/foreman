@@ -1,32 +1,31 @@
 // TODO:
-// -> Split into smaller components
-// -> JWT token scope, how?
-// -> Loading fields from plugins (like activation key)
-// -> tabIndex
+// -> Permissions
 // -> Lint & Rubocop
 // -> Ruby tests
 // -> JS tests
 
-import PropTypes from 'prop-types';
-import React, { useEffect, useState } from 'react';
-import Select from '../common/forms/Select';
-import Checkbox from '../common/forms/Checkbox';
-import CommonForm from '../common/forms/CommonForm';
-import { get } from '../../redux/API';
-import { useSelector, useDispatch } from 'react-redux';
-import { GR_COMMAND } from './GlobalRegistrationConstants';
-import { selectRegisterCommand, selectStatus } from './GlobalRegistrationSelectors';
+import React, { useState } from 'react';
 import { Grid } from 'patternfly-react';
-import { translate as __ } from 'foremanReact/common/I18n';
-import GRPluginParams from './GRPluginParams'
-import GlobalRegistrationCommand from './GlobalRegistrationCommand'
+import PropTypes from 'prop-types';
+import { useDispatch } from 'react-redux';
 
-const GlobalRegistration = props => {
-  const { organizations, locations, hostGroups, pluginParams } = props.data;
+import { get } from '../../redux/API';
+
+import { GLOBAL_REGISTRATION } from './GlobalRegistrationConstants';
+import GlobalRegistrationPluginParams from './GlobalRegistrationPluginParams';
+import GlobalRegistrationCommand from './GlobalRegistrationCommand';
+import GlobalRegistrationDefaultParams from './GlobalRegistrationDefaultParams';
+
+const GlobalRegistration = ({
+  organizations,
+  locations,
+  hostGroups,
+  pluginParams,
+}) => {
   const dispatch = useDispatch();
 
-  const [selectedOrg, setSelectedOrg] = useState(null);
-  const [selectedLoc, setSelectedLoc] = useState(null);
+  const [selectedOrganization, setSelectedOrganization] = useState(null);
+  const [selectedLocation, setSelectedLocation] = useState(null);
   const [selectedHostGroup, setSelectedHostGroup] = useState(null);
   const [insecure, setInsecure] = useState(false);
   const [expiration, setExpiration] = useState(4);
@@ -34,106 +33,53 @@ const GlobalRegistration = props => {
 
   const handleSubmit = () => {
     const params = {
-      organization_id: selectedOrg,
-      location_id: selectedLoc,
+      organization_id: selectedOrganization,
+      location_id: selectedLocation,
       hostgroup_id: selectedHostGroup,
-      insecure: insecure,
-      expiration: expiration,
-    }
+      insecure,
+      expiration,
+    };
 
     dispatch(
       get({
-        key: GR_COMMAND,
+        key: GLOBAL_REGISTRATION,
         url: '/provisioning_templates/global_registration',
-        params: {...params, ...selectedPluginParams },
+        params: { ...params, ...selectedPluginParams },
       })
     );
   };
 
-  const handleParamFromPlugins = (e) => {
-    const newValues = {...selectedPluginParams, ...{[e.target.name]: e.target.value } }
-    console.log(newValues)
-    console.log(newValues)
+  const handleParamFromPlugins = e => {
+    const newValues = {
+      ...selectedPluginParams,
+      ...{ [e.target.name]: e.target.value },
+    };
+
     setSelectedPluginParams(newValues);
-  }
+  };
 
   return (
     <div>
-      <Grid.Row>
-        <Grid.Col md={8}>
-          {organizations.length && (
-            <Select
-              label={__('Organization')}
-              onChange={e => setSelectedOrg(e.target.value)}
-              className="grt-organizations-select"
-              options={organizations}
-              tabIndex={1}
-            />
-          )}
-        </Grid.Col>
-      </Grid.Row>
-      <br />
-      <Grid.Row>
-        <Grid.Col md={8}>
-          {locations.length && (
-            <Select
-              label={__('Location')}
-              onChange={e => setSelectedLoc(e.target.value)}
-              options={locations}
-              className="grt-locations-select"
-              tabIndex={2}
-            />
-          )}
-        </Grid.Col>
-      </Grid.Row>
-      <br />
-      <Grid.Row>
-        <Grid.Col md={8}>
-          {hostGroups.length && (
-            <Select
-              label={__('Host Group')}
-              onChange={e => setSelectedHostGroup(e.target.value)}
-              options={hostGroups}
-              className="grt-host-group-select"
-              tabIndex={3}
-            />
-          )}
-        </Grid.Col>
-      </Grid.Row>
-      <br />
-      <GRPluginParams params={pluginParams} onChangeHandler={handleParamFromPlugins} />
-      <Grid.Row>
-        <Grid.Col md={8}>
-
-        <Checkbox
-          label={__('Insecure?')}
-          onChange={e => setInsecure(!insecure)}
-          checked={insecure}
-          className='grt-insecure'
-          tabIndex={4}
-        />
-        </Grid.Col>
-      </Grid.Row>
-      <br />
+      <GlobalRegistrationDefaultParams
+        organizations={organizations}
+        locations={locations}
+        hostGroups={hostGroups}
+        insecure={insecure}
+        expiration={expiration}
+        handleOrganization={setSelectedOrganization}
+        handleLocation={setSelectedLocation}
+        handleHostGroup={setSelectedHostGroup}
+        handleInsecure={setInsecure}
+        handleExpiration={setExpiration}
+      />
+      <GlobalRegistrationPluginParams
+        params={pluginParams}
+        onChangeHandler={handleParamFromPlugins}
+      />
 
       <Grid.Row>
         <Grid.Col md={8}>
-          <CommonForm label="Expiration (hours)" className="grt-expiration">
-            <input
-              type="number"
-              className="form-control"
-              value={expiration}
-              onChange={e => setExpiration(e.target.value)}
-              tabIndex={5}
-            />
-          </CommonForm>
-        </Grid.Col>
-      </Grid.Row>
-      <br />
-
-      <Grid.Row>
-        <Grid.Col md={8}>
-          <button onClick={handleSubmit} tabIndex={6}>Generate command</button>
+          <button onClick={handleSubmit}>Generate command</button>
         </Grid.Col>
       </Grid.Row>
       <br />
@@ -141,6 +87,13 @@ const GlobalRegistration = props => {
       <GlobalRegistrationCommand />
     </div>
   );
+};
+
+GlobalRegistration.propTypes = {
+  organizations: PropTypes.array.isRequired,
+  locations: PropTypes.array.isRequired,
+  hostGroups: PropTypes.array.isRequired,
+  pluginParams: PropTypes.array.isRequired,
 };
 
 export default GlobalRegistration;

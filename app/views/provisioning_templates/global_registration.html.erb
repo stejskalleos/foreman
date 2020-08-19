@@ -1,14 +1,13 @@
 <% title _("Global registration template") %>
 
 <% props = {
-  organizations: @organizations,
-  locations: @locations,
-  hostGroups: @host_groups,
-  pluginParams: @plugin_params,
+  organizations: @organizations.map { |org| { value: org.id, label: org.name, key: "org_#{org.id}" } },
+  locations: @locations.map { |loc| { value: loc.id, label: loc.name, key: "loc_#{loc.id}" } },
+  hostGroups: @host_groups.map { |hg| { value: hg.id, label: hg.name, key: "hog_#{hg.id}" } },
+  pluginParams: @plugin_params.map { |param| { label: param.to_s.titleize, key: param.to_s } },
 }
 %>
 
 <div id="grt_form">
-<%# TODO: Use react_component only %>
-<%= mount_react_component('GlobalRegistration', '#grt_form', props.to_json) %>
+<%= react_component('GlobalRegistration', props) %>
 </div>
