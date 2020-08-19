@@ -201,6 +201,20 @@ class Api::TestableControllerTest < ActionController::TestCase
     end
   end
 
+  context 'Authorization Bearer header' do
+    it 'not set' do
+      request.headers['Authorization'] = 'Basic token23'
+      get :index
+      refute subject.send(:bearer_token_set?)
+    end
+
+    it 'set with token' do
+      request.headers['Authorization'] = 'Bearer token23'
+      get :index
+      assert_equal 'token23', subject.send(:token_from_auth_header).to_s
+    end
+  end
+
   context 'using nested objects' do
     setup do
       @controller.stubs(:allowed_nested_id).returns(['domain_id'])

@@ -307,6 +307,16 @@ module Api
       logger.debug { "Body: #{response.body}" }
     end
 
+    # Check if header "Authorization: Bearer jwt-token-value" is set
+    def bearer_token_set?
+      request.authorization.present? && request.authorization.start_with?('Bearer')
+    end
+
+    # Get token from Authorization header
+    def token_from_auth_header
+      request.authorization.split(' ')[1]
+    end
+
     private
 
     attr_reader :nested_obj
