@@ -18,7 +18,7 @@ export const renderOptions = opts => {
       if (opt.children) {
         return renderOptGroup(opt);
       }
-      return renderOption(opt.value, opt.label, index);
+      return renderOption(opt.value, opt.label, `${opt.label}-${index}`);
     });
   }
   return Object.entries(opts).map(([val, text]) => renderOption(val, text));
