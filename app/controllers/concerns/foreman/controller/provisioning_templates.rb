@@ -52,7 +52,7 @@ module Foreman::Controller::ProvisioningTemplates
     organization = Organization.authorized(:view_organizations).find(params['organization_id']) if params['organization_id'].present?
     location = Location.authorized(:view_locations).find(params['location_id']) if params['location_id'].present?
     host_group = Hostgroup.authorized(:view_hostgroups).find(params['hostgroup_id']) if params["hostgroup_id"].present?
-    auth_token = bearer_token_set? ? request.authorization.split(' ')[1] : User.current.jwt_token!(expiration: 4.hours.to_i)
+    auth_token = bearer_token_set? ? token_from_auth_header : User.current.jwt_token!(expiration: 4.hours.to_i)
 
     {
       user: User.current,
