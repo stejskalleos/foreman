@@ -14,11 +14,11 @@ const renderOptGroup = group => (
 
 export const renderOptions = opts => {
   if (Array.isArray(opts)) {
-    return opts.map(opt => {
+    return opts.map((opt, index) => {
       if (opt.children) {
         return renderOptGroup(opt);
       }
-      return renderOption(opt.value, opt.label);
+      return renderOption(opt.value, opt.label, index);
     });
   }
   return Object.entries(opts).map(([val, text]) => renderOption(val, text));
