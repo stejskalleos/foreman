@@ -20,18 +20,18 @@ set -e
 <%= snippet 'puppet_setup' %>
 <% end -%>
 
-<% if host_param_true?('host_registration_insights') %>
+<% if host_param_true?('host_registration_insights') -%>
 echo '#'
 echo '# Installing Insights client'
 echo '#'
 
 yum install insights-client
 insights-client --register
-<% end %>
+<% end -%>
 
-<% if host_param_true?('host_registration_rex') %>
+<% if host_param_true?('host_registration_ssh_keys') -%>
 <%= snippet 'remote_execution_ssh_keys'  %>
-<% end %>
+<% end -%>
 
 # Call home to exit build mode
 

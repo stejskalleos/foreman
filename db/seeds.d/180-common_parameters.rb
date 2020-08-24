@@ -1,10 +1,10 @@
 CommonParameter.without_auditing do
-  params = [
-    { name: "host_registration_rex", key_type: "boolean", value: true },
+  common_params = [
+    { name: "host_registration_ssh_keys", key_type: "boolean", value: true },
     { name: "host_registration_insights", key_type: "boolean", value: false },
   ]
 
-  params.each do |param|
-    CommonParameter.find_or_create_by(param)
+  common_params.each do |cp|
+    CommonParameter.create(cp) unless CommonParameter.find_by(name: cp[:name])
   end
 end
