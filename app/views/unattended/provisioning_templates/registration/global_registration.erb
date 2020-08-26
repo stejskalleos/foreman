@@ -54,3 +54,6 @@ fi
 <% else -%>
 create_host_curl
 <% end -%>
+
+TOKEN=$(curl --silent -X GET '<%= foreman_server_url %>/api/hosts?search=name+%3D+$(hostname --fqdn)' <%= headers.join(' ') %> | grep -Po '(?<=\"registration_token\":")([^\"]+)')
+curl -X GET "<%= foreman_server_url %>/foreman_register/hosts/register?token=$TOKEN" | bash

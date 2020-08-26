@@ -29,9 +29,7 @@ yum install insights-client
 insights-client --register
 <% end -%>
 
-<% if host_param_true?('host_registration_ssh_keys') -%>
-<%= snippet 'remote_execution_ssh_keys'  %>
-<% end -%>
+<%= snippet 'remote_execution_ssh_keys' if host_param_true?('host_registration_ssh_keys')  -%>
 
 # Call home to exit build mode
 
