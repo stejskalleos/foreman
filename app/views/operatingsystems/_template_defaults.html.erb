@@ -1,8 +1,6 @@
 <div class="tab-pane" id="templates">
   <% if @operatingsystem.new_record? %>
-    <%= alert(:class => 'alert-info',
-              :header => _("It is not possible to assign provisioning templates at this stage."),
-              :text => _("Please save the Operating System first and try again.")) %>
+    <%= react_component('OperatingSystemTemplates') %>
   <% else %>
     <% if ProvisioningTemplate.joins(:operatingsystems).
         where(:operatingsystems => { :id => @operatingsystem.id }).empty? %>
@@ -15,5 +13,4 @@
       <%= render 'templates', :f => builder %>
     <% end %>
   <% end %>
-
 </div>

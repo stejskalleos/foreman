@@ -15,6 +15,7 @@ class OperatingsystemsController < ApplicationController
   def create
     @operatingsystem = Operatingsystem.new(operatingsystem_params)
     if @operatingsystem.save
+      assign_templates
       process_success
     else
       process_error
@@ -52,14 +53,33 @@ class OperatingsystemsController < ApplicationController
     @operatingsystem = @operatingsystem.deep_clone include: [:media, :ptables, :architectures, :puppetclasses, :os_parameters], except: [:title]
   end
 
+  def templates
+    template_kinds = TemplateKind.order(:name)
+    templates = ProvisioningTemplate.where(snippet: false).select(:id, :name, :template_kind_id)
+
+    render json: { template_kinds: template_kinds, templates: templates }
+  end
+
   private
 
   def action_permission
     case params[:action]
-      when 'clone'
+      when 'clone', 'templates'
         :create
       else
         super
+    end
+  end
+
+  def assign_templates
+    return unless SETTINGS[:unattended]
+
+    templates_attributes = operatingsystem_params['os_default_templates_attributes']&.map { |t| t[1] }
+    templates_attributes&.each do |attr|
+      next if attr['provisioning_template_id'].empty?
+      pt = ProvisioningTemplate.find(attr['provisioning_template_id'])
+      pt.operatingsystems << @operatingsystem
+      pt.save
     end
   end
 end

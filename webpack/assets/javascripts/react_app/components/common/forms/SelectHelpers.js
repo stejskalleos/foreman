@@ -1,7 +1,7 @@
 import React from 'react';
 
 const renderOption = (val, text, key = null) => (
-  <option value={val} key={key || val}>
+  <option value={val} key={key || `${val}-${text}`}>
     {text}
   </option>
 );

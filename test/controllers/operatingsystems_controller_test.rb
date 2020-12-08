@@ -47,6 +47,12 @@ class OperatingsystemsControllerTest < ActionController::TestCase
       get :clone, params: { :id => Operatingsystem.first.id }, session: set_session_user
       assert_template 'clone'
     end
+
+    test 'templates' do
+      get :templates, session: set_session_user
+      assert_not_empty JSON.parse(response.body)['template_kinds']
+      assert_not_empty JSON.parse(response.body)['templates']
+    end
   end
 
   context 'redirects' do
@@ -151,5 +157,15 @@ class OperatingsystemsControllerTest < ActionController::TestCase
                                :operatingsystem => {:os_default_templates_attributes => [{ :id => os_default_template_id, :provisioning_template_id => '', :template_kind_id => @template_kind.id }]} }, session: set_session_user
       end
     end
+  end
+
+  test 'create os and assign templates' do
+    os_name = 'MyOsWithTemplate'
+    template = templates(:pxekickstart)
+    templates_attr = { '0': { template_kind_id: template.template_kind_id, provisioning_template_id: template.id } }
+    params = { operatingsystem: { name: os_name, major: 1, os_default_templates_attributes: templates_attr } }
+
+    post :create, params: params, session: set_session_user
+    assert Operatingsystem.find_by(name: os_name).os_default_templates.any?
   end
 end

@@ -426,6 +426,7 @@ Foreman::Application.routes.draw do
         end
         collection do
           get 'auto_complete_search'
+          get 'templates'
         end
       end
     end
