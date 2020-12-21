@@ -30,30 +30,22 @@ module Foreman::Controller::RegistrationCommands
   end
 
   def host_config_params
-    organization = Organization.authorized(:view_organizations).find(registration_params['organization_id']) if registration_params['organization_id'].present?
-    location = Location.authorized(:view_locations).find(registration_params['location_id']) if registration_params['location_id'].present?
-    host_group = Hostgroup.authorized(:view_hostgroups).find(registration_params['hostgroup_id']) if registration_params["hostgroup_id"].present?
-    operatingsystem = Operatingsystem.authorized(:view_operatingsystems).find(registration_params['operatingsystem_id']) if registration_params["operatingsystem_id"].present?
+    organization = Organization.authorized(:view_organizations).find_by(id: registration_params['organization_id']) if registration_params['organization_id'].present?
+    location = Location.authorized(:view_locations).find_by(id: registration_params['location_id']) if registration_params['location_id'].present?
+    host_group = Hostgroup.authorized(:view_hostgroups).find_by(id: registration_params['hostgroup_id']) if registration_params["hostgroup_id"].present?
+    operatingsystem = Operatingsystem.authorized(:view_operatingsystems).find_by(id: registration_params['operatingsystem_id']) if registration_params["operatingsystem_id"].present?
 
     Host.new(organization: organization, location: location, hostgroup: host_group, operatingsystem: operatingsystem).params
   end
 
   def setup_insights
-    return if registration_params['setup_insights'].to_s.blank?
-
-    from_host = host_config_params['host_registration_insights']
-    from_request = ActiveRecord::Type::Boolean.new.deserialize(registration_params['setup_insights'])
-
-    from_request if (from_request != from_host)
+    return if registration_params['setup_insights'].to_s.blank? || registration_params['setup_insights'] == 'inherit'
+    registration_params['setup_insights']
   end
 
   def setup_remote_execution
-    return if registration_params['setup_remote_execution'].to_s.blank?
-
-    from_host = host_config_params['host_registration_remote_execution']
-    from_request = ActiveRecord::Type::Boolean.new.deserialize(registration_params['setup_remote_execution'])
-
-    from_request if (from_request != from_host)
+    return if registration_params['setup_remote_execution'].to_s.blank? || registration_params['setup_remote_execution'] == 'inherit'
+    registration_params['setup_remote_execution']
   end
 
   def command_headers

@@ -52,7 +52,14 @@ const OrderableSelect = ({
             moveDraggedOption={moveDraggedOption}
             {...tokenProps}
           />
-          {name && <input type="hidden" name={name} value={option.value} />}
+          {name && (
+            <input
+              type="hidden"
+              name={`${name}[${idx}]`}
+              value={option.value}
+              multiple
+            />
+          )}
         </div>
       )}
       {...props}

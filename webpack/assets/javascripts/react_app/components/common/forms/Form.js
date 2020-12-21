@@ -17,6 +17,7 @@ const Form = ({
   disabled,
   submitting,
   errorTitle,
+  submitBtnText,
 }) => (
   <form className={className} onSubmit={onSubmit}>
     {error && (
@@ -31,7 +32,12 @@ const Form = ({
       </Alert>
     )}
     {children}
-    <Actions onCancel={onCancel} disabled={disabled} submitting={submitting} />
+    <Actions
+      onCancel={onCancel}
+      disabled={disabled}
+      submitting={submitting}
+      submitBtnText={submitBtnText}
+    />
   </form>
 );
 
@@ -48,6 +54,7 @@ Form.propTypes = {
   errorTitle: PropTypes.string,
   onSubmit: PropTypes.func,
   onCancel: PropTypes.func,
+  submitBtnText: PropTypes.string,
 };
 
 Form.defaultProps = {
@@ -60,6 +67,7 @@ Form.defaultProps = {
   errorTitle: `${__('Unable to save')}. `,
   onSubmit: noop,
   onCancel: noop,
+  submitBtnText: null,
 };
 
 export default Form;

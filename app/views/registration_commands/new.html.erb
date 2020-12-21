@@ -1,1 +1,8 @@
-<%= render 'form' %>
+<% title _('Register Host') %>
+
+<%= react_component('Registration', { originalScope: {
+                                      organizations: @organizations,
+                                      organizationId: @organization&.id,
+                                      locations: @locations,
+                                      locationId: @location&.id,
+                                      configParams: @config_params }}) %>

@@ -132,6 +132,7 @@ Foreman::Application.routes.draw do
 
         get 'register', to: 'registration_commands#new'
         post 'register', to: 'registration_commands#create'
+        get 'register/os/:id', to: 'registration_command#os_template'
       end
 
       constraints(host_id: /[^\/]+/) do

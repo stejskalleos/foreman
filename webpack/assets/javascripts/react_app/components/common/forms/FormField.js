@@ -108,7 +108,7 @@ FormField.propTypes = {
   inputSizeClass: PropTypes.string,
   labelSizeClass: PropTypes.string,
   onChange: PropTypes.func,
-  children: PropTypes.element,
+  children: PropTypes.oneOfType([PropTypes.element, PropTypes.array]),
   inputProps: PropTypes.object,
 };
 

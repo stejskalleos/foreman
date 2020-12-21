@@ -106,7 +106,11 @@ class Select extends React.Component {
 
 Select.propTypes = {
   name: PropTypes.string,
-  value: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
+  value: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.bool,
+    PropTypes.number,
+  ]),
   label: PropTypes.string,
   className: PropTypes.string,
   allowClear: PropTypes.bool,
