@@ -46,6 +46,14 @@ module Foreman
       class HostgroupNotFoundError < RenderingError
         MESSAGE = N_('Hostgroup not found or not accessible').freeze
       end
+
+      class UndefinedPackages < RenderingError
+        MESSAGE = N_('No packages provided for the installation.').freeze
+      end
+
+      class UnsupportedOS < RenderingError
+        MESSAGE = N_('Unsupported or no operating system found for this host.').freeze
+      end
     end
   end
 end

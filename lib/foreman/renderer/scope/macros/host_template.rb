@@ -121,6 +121,39 @@ module Foreman
             (@port && @baud) ? "console=ttyS#{@port},#{@baud}" : ''
           end
 
+          apipie :method, 'Generates commands for package(s) installation, supported OS families: Redhat, Debian & Suse' do
+            required :packages, String, desc: "Package(s) to install"
+            returns String, desc: 'Installation commands'
+            example "CentOS host: install_packages('pkg1') #=> yum -y install pkg1"
+            example "Fedora host: install_packages('pkg1 pkg2') #=> dnf -y install pkg1 pkg2"
+          end
+          def install_packages(packages)
+            raise UndefinedPackages.new if packages.empty?
+
+            case host.operatingsystem&.family
+            when 'Redhat'
+              if host.operatingsystem.name.downcase == 'fedora'
+                "dnf -y install #{packages}"
+              else
+                "yum -y install #{packages}"
+              end
+            when 'Debian'
+              <<~CMD
+                [ -x "$(command -v subscription-manager)" ] && subscription-manager refresh
+                export DEBIAN_FRONTEND=noninteractive
+                apt-get -y update
+                apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" -y install #{packages}
+              CMD
+            when 'Suse'
+              <<~CMD
+                zypper refresh
+                zypper -n install #{packages}
+              CMD
+            else
+              raise UnsupportedOS.new
+            end
+          end
+
           private
 
           def enc

@@ -23,6 +23,8 @@ set -e
 <%= snippet 'remote_execution_ssh_keys' %>
 <%= snippet 'insights' -%>
 
+<%= install_packages(host_param('host_registration_packages')) unless host_param('host_registration_packages').blank? %>
+<%= snippet_if_exists('registration_linux_post') %>
 
 # Call home to exit build mode
 <% built_https = foreman_url('built').start_with?('https') -%>
