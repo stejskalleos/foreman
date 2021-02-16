@@ -16,7 +16,7 @@ const TaxonomySwitcher = ({
   onLocationClick,
   onOrgClick,
 }) => (
-  <Nav navbar pullLeft className="navbar-iconic">
+  <React.Fragment>
     <TaxonomyDropdown
       taxonomyType="organization"
       currentTaxonomy={currentOrganization}
@@ -34,7 +34,7 @@ const TaxonomySwitcher = ({
         <Spinner size="md" inverse loading />
       </NavItem>
     )}
-  </Nav>
+  </React.Fragment>
 );
 TaxonomySwitcher.propTypes = {
   onLocationClick: PropTypes.func,

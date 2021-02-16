@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { VerticalNav } from 'patternfly-react';
+import { VerticalNav, Nav } from 'patternfly-react';
 import { translate as __ } from '../../common/I18n';
 
 import {
@@ -11,6 +11,8 @@ import {
 import LayoutContainer from './components/LayoutContainer';
 import TaxonomySwitcher from './components/TaxonomySwitcher';
 import UserDropdowns from './components/UserDropdowns';
+import SearchMenu from './components/SearchMenu';
+
 import './layout.scss';
 
 const Layout = ({
@@ -47,15 +49,18 @@ const Layout = ({
           iconImg={data.logo}
           href={data.root}
         />
-        <TaxonomySwitcher
-          currentLocation={currentLocation}
-          locations={data.locations.available_locations || []}
-          onLocationClick={changeLocation}
-          currentOrganization={currentOrganization}
-          organizations={data.orgs.available_organizations || []}
-          onOrgClick={changeOrganization}
-          isLoading={isLoading}
-        />
+        <Nav navbar pullLeft className="navbar-iconic">
+          <TaxonomySwitcher
+            currentLocation={currentLocation}
+            locations={data.locations.available_locations || []}
+            onLocationClick={changeLocation}
+            currentOrganization={currentOrganization}
+            organizations={data.orgs.available_organizations || []}
+            onOrgClick={changeOrganization}
+            isLoading={isLoading}
+          />
+          <SearchMenu items={data.menu} />
+        </Nav>
         <UserDropdowns
           notificationUrl={data.notification_url}
           user={data.user}
