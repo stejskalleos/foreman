@@ -32,6 +32,7 @@ module Api
         render plain: @provisioning_template.render(variables: @global_registration_vars).html_safe
       end
 
+      # TODO: Rename to host_initial_configuration
       api :POST, "/register", N_("Find or create a host and render the Host registration template")
       param :host, Hash, required: true, action_aware: true do
         param :name, String, required: true
@@ -91,6 +92,22 @@ module Api
 
         @host.setBuild
         safe_render(@template)
+      end
+
+      # Better naming, duh!
+      def facts
+        name = params['fqdn'] || params['networking']['fqdn']
+
+        host = Host.find_or_initialize_by(name: name)
+        host.build = false
+        host.managed = false
+
+        facts = params
+        facts[:_type] = :puppet
+
+        # Why do I need to do that?
+        FactParser.register_fact_parser :puppet, PuppetFactParser, true
+        HostFactImporter.new(host).import_facts(params.to_unsafe_h)
       end
 
       private

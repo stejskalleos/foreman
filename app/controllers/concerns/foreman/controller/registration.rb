@@ -134,7 +134,7 @@ module Foreman::Controller::Registration
   def api_authorization_token
     scope = [{
       controller: :registration,
-      actions: [:global, :host],
+      actions: [:global, :host, :facts],
     }]
     User.current.jwt_token!(expiration: 4.hours.to_i, scope: scope)
   end

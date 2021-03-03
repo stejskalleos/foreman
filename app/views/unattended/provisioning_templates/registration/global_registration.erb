@@ -33,8 +33,32 @@ cat << EOF > $SSL_CA_CERT
 <%= foreman_server_ca_cert %>
 EOF
 
+install_facter() {
+    echo "# Installing facter"
+
+    if [ -f /usr/bin/dnf ]; then
+        dnf install facter -y
+    elif [ -f /usr/bin/yum ]; then
+        yum install facter -y
+    elif [ -f /usr/bin/apt-get ]; then
+        apt-get install facter -y
+    else
+        echo "Unsupported package manager, cannot install facter"
+        exit 1
+    fi
+}
 
 register_host() {
+    FACTS_FILE=$(mktemp --suffix .json)
+    facter --json >> $FACTS_FILE
+    curl --cacert $SSL_CA_CERT --request POST "<%= @registration_url %>/facts" \
+         <%= headers.join(' ') %> \
+         -H 'Content-Type: application/json' \
+         --data @$FACTS_FILE
+    rm -f $FACTS_FILE
+}
+
+host_initial_configuration() {
   curl --cacert $SSL_CA_CERT --request POST <%= @registration_url %> \
        <%= headers.join(' ') %> \
        --data "host[name]=$(hostname --fqdn)" \
@@ -56,7 +80,7 @@ echo "#"
 
 <% if plugin_present?('katello') -%>
 if [ x$ID = xrhel ] || [ x$ID = xcentos ]; then
-    register_katello_host(){
+    katello_host_initial_configuration() {
         UUID=$(subscription-manager identity | head -1 | awk '{print $3}')
         curl --cacert $SSL_CA_CERT --request POST "<%= @registration_url %>" \
              --data "uuid=$UUID" \
@@ -76,10 +100,14 @@ if [ x$ID = xrhel ] || [ x$ID = xcentos ]; then
     rm -f $CONSUMER_RPM
 
     subscription-manager register --org='<%= @organization.label %>' --activationkey='<%= @activation_key %>' || exit 1
-    register_katello_host | bash
+    katello_host_initial_configuration | bash
 else
-    register_host | bash
+    install_facter
+    register_host
+    host_initial_configuration | bash
 fi
 <% else -%>
-register_host | bash
+install_facter
+register_host
+host_initial_configuration | bash
 <% end -%>
