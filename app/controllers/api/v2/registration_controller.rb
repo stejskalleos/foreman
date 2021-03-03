@@ -93,6 +93,22 @@ module Api
         safe_render(@template)
       end
 
+      # Better naming, duh!
+      def facts
+        name = params['fqdn'] || params['networking']['fqdn']
+
+        host = Host.find_or_initialize_by(name: name)
+        host.build = false
+        host.managed = false
+
+        facts = params
+        facts[:_type] = :puppet
+
+        # Why do I need to do that?
+        FactParser.register_fact_parser :puppet, PuppetFactParser, true
+        HostFactImporter.new(host).import_facts(params.to_unsafe_h)
+      end
+
       private
 
       def check_media_type
