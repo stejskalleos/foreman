@@ -6,6 +6,7 @@ model: ProvisioningTemplate
 #!/bin/sh
 <%
     headers = ["-H 'Authorization: Bearer #{@auth_token}'"]
+    activation_keys = [(@hostgroup.params['kt_activation_keys'] if @hostgroup), @activation_key].compact.join(',')
 -%>
 
 # Rendered with following template parameters:
@@ -85,7 +86,7 @@ if [ x$ID = xrhel ] || [ x$ID = xcentos ]; then
 
     rm -f $CONSUMER_RPM
 
-    subscription-manager register --org='<%= @organization.label %>' --activationkey='<%= @activation_key %>' || exit 1
+    subscription-manager register --org='<%= @organization.label %>' --activationkey='<%= activation_keys %>' || exit 1
     register_katello_host | bash
 else
     register_host | bash

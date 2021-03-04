@@ -22,6 +22,7 @@ import { reducers as apiReducer } from '../API';
 import { reducers as modelsPageReducers } from '../../routes/Models/ModelsPage';
 import { reducers as settingRecordsReducers } from '../../components/SettingRecords';
 import { reducers as personalAccessTokensReducers } from '../../components/users/PersonalAccessTokens';
+import { reducers as registrationPageReducers } from '../../routes/RegistrationCommands/RegistrationCommandsPage';
 
 export function combineReducersAsync(asyncReducers) {
   return combineReducers({
@@ -48,6 +49,7 @@ export function combineReducersAsync(asyncReducers) {
     ...auditsPageReducers,
     ...modalReducers,
     ...modelsPageReducers,
+    ...registrationPageReducers,
 
     // Middlewares
     ...intervalReducers,

@@ -234,7 +234,7 @@ module.exports = env => {
       hot: true
     };
     // Source maps
-    config.devtool = 'inline-source-map';
+    config.devtool = 'eval';
   }
 
   return config;
