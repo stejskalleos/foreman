@@ -6,7 +6,7 @@ class RegistrationCommandsControllerTest < ActionController::TestCase
     assert_response :success
     assert_template :new
   end
-
+  # TODO: Add tests for 3 variants of params
   describe 'create' do
     test 'create' do
       params = { organization: taxonomies(:organization1).id, location: taxonomies(:location1).id }
