@@ -35,6 +35,9 @@ export const selectSmartProxies = state =>
 export const selectConfigParams = state =>
   selectAPIResponse(state, REGISTRATION_COMMANDS_DATA).configParams || [];
 
+export const selectPluginData = state =>
+  selectAPIResponse(state, REGISTRATION_COMMANDS_DATA).pluginData || {};
+
 // Generate Command
 
 export const selectAPIStatusCommand = state =>

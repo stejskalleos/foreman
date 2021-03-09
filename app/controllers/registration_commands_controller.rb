@@ -9,6 +9,7 @@ class RegistrationCommandsController < ApplicationController
       operatingSystems: Operatingsystem.authorized(:view_operatingsystems),
       smartProxies: Feature.find_by(name: 'Registration')&.smart_proxies,
       configParams: host_config_params,
+      pluginData: plugin_data,
     }
   end
 
@@ -50,5 +51,9 @@ class RegistrationCommandsController < ApplicationController
     else
       params
     end
+  end
+
+  def plugin_data
+    {}
   end
 end

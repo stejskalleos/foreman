@@ -1,15 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import React from 'react';
 
 import { FormGroup } from '@patternfly/react-core';
 import { AngleDownIcon, AngleRightIcon } from '@patternfly/react-icons';
-import { sprintf, translate as __ } from '../../../../common/I18n';
+import { translate as __ } from '../../../../common/I18n';
 
 const Advanced = ({ show, handleShow }) => (
   <FormGroup>
     <a onClick={() => handleShow(!show)}>
       {show ? <AngleDownIcon /> : <AngleRightIcon />}
-      {sprintf('%s advanced fields', show ? _('Hide') : _('Show'))}
+      {show ? __('Hide advanced fields') : __('Show advanced fields')}
     </a>
   </FormGroup>
 );

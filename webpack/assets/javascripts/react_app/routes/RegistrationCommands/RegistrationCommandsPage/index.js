@@ -1,43 +1,36 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Link } from 'react-router-dom';
+
+import { Alert, Form, Grid, GridItem } from '@patternfly/react-core';
 
 import { translate as __ } from '../../../common/I18n';
 import { get, post } from '../../../redux/API';
-import { foremanUrl } from '../../../../foreman_tools';
-
 import {
   useForemanOrganization,
   useForemanLocation,
 } from '../../../Root/Context/ForemanContext';
 import { STATUS } from '../../../constants';
 
-import {
-  Alert,
-  Form,
-  Grid,
-  GridItem,
-} from '@patternfly/react-core';
-
 import PageLayout from '../../common/PageLayout/PageLayout';
 import Slot from '../../../components/common/Slot';
+
+import {
+  selectAPIStatusData,
+  selectAPIStatusCommand,
+  selectPluginData,
+} from './RegistrationCommandsPageSelectors';
+import { dataAction, commandAction } from './RegistrationCommandsPageActions';
 
 import Taxonomies from './fields/Taxonomies';
 import HostGroup from './fields/HostGroup';
 import OperatingSystem from './fields/OperatingSystem';
 import SmartProxy from './fields/SmartProxy';
 import Insecure from './fields/Insecure';
-import Advanced from './fields/Advanced';
 import ConfigParams from './fields/ConfigParams';
 import TokenLifeTime from './fields/TokenLifeTime';
-import Command from './fields/Command';
+import Advanced from './fields/Advanced';
 import Actions from './fields/Actions';
-
-import {
-  selectAPIStatusData,
-  selectAPIStatusCommand,
-} from './RegistrationCommandsPageSelectors';
-import { dataAction, commandAction } from './RegistrationCommandsPageActions';
+import Command from './fields/Command';
 
 const RegistrationCommandsPage = () => {
   const dispatch = useDispatch();
@@ -57,19 +50,24 @@ const RegistrationCommandsPage = () => {
   const [locationId, setLocationId] = useState(currentLocation?.id);
   const [hostGroupId, setHostGroupId] = useState();
   const [operatingSystemId, setOperatingSystemId] = useState();
-  const [formData, setFormData] = useState({
-    smartProxyId: undefined,
-    insecure: false,
-    setupInsights: '',
-    setupRemoteExecution: '',
-    jwtExpiration: 4,
-  });
+  const [smartProxyId, setSmartProxyId] = useState();
+  const [insecure, setInsecure] = useState(false);
+  const [setupRemoteExecution, setSetupRemoteExecution] = useState('');
+  const [setupInsights, setSetupInsights] = useState('');
+  const [jwtExpiration, setJwtExpiration] = useState(4);
 
-  const updateFormData = data => {
-    setFormData({ ...formData, ...data });
+  const pluginData = useSelector(selectPluginData);
+  const [pluginValues, setPluginValues] = useState({});
+
+  const updatePluginValues = data => {
+    console.log('updatePluginValues')
+    console.log(data)
+    console.log({ ...pluginValues, ...data })
+    setPluginValues({ ...pluginValues, ...data });
   };
 
-  // Tohle by melo byt soucasti update Form asi
+  // // Tohle by melo byt soucasti update Form asi
+  // -> Plus v helpers zejo
   const handleInvalidFields = (field, isValid) => {
     if (isValid) {
       setInvalidFields(invalidFields.filter(f => f !== field));
@@ -88,7 +86,7 @@ const RegistrationCommandsPage = () => {
       locationId,
       hostGroupId,
       operatingSystemId,
-      ...formData,
+      ...pluginData,
     };
 
     dispatch(post(commandAction(params)));
@@ -97,7 +95,7 @@ const RegistrationCommandsPage = () => {
   useEffect(() => {
     setHostGroupId();
     setOperatingSystemId();
-    setFormData({ smartProxyId: undefined });
+    setSmartProxyId();
 
     dispatch(
       get(
@@ -126,7 +124,7 @@ const RegistrationCommandsPage = () => {
           <Form onSubmit={e => submit(e)}>
             {apiStatusData === STATUS.ERROR && (
               <Alert
-                variant='danger'
+                variant="danger"
                 title={__(
                   'There was an error while loading the data, see the logs for more information.'
                 )}
@@ -153,22 +151,27 @@ const RegistrationCommandsPage = () => {
             />
 
             <SmartProxy
-              smartProxyId={formData?.smartProxyId}
-              handleSmartProxy={updateFormData}
+              smartProxyId={smartProxyId}
+              handleSmartProxy={setSmartProxyId}
               isLoading={isLoading}
             />
 
             <Insecure
-              value={formData?.insecure}
-              handleInsecure={updateFormData}
+              insecure={insecure}
+              handleInsecure={setInsecure}
               isLoading={isLoading}
             />
 
             <Slot
+              taxonomies={{
+                organizationId,
+                locationId,
+              }}
+              id="registrationGeneral"
+              pluginData={pluginData}
+              pluginValues={pluginValues}
+              onChange={updatePluginValues}
               isLoading={isLoading}
-              taxonomies={ {organizationId: organizationId, locationId: locationId }}
-              onChange={updateFormData}
-              id='registrationGeneral'
               multi
             />
 
@@ -177,22 +180,28 @@ const RegistrationCommandsPage = () => {
             {showAdvanced && (
               <>
                 <ConfigParams
-                  setupInsights={formData?.setupInsights}
-                  setupRemoteExecution={formData?.setupRemoteExecution}
-                  onChange={updateFormData}
+                  setupRemoteExecution={setupRemoteExecution}
+                  setupInsights={setupInsights}
+                  handleInsights={setSetupInsights}
+                  handleRemoteExecution={setSetupRemoteExecution}
                   isLoading={isLoading}
                 />
                 <TokenLifeTime
-                  value={formData?.jwtExpiration}
-                  onChange={updateFormData}
+                  value={jwtExpiration}
+                  onChange={setJwtExpiration}
+                  handleInvalidFields={handleInvalidFields} // Toto je spatne
                   isLoading={isLoading}
-                  handleInvalidFields={handleInvalidFields}
                 />
                 <Slot
-                  taxonomies={ { organizationId: organizationId, locationId: locationId }}
+                  taxonomies={{
+                    organizationId,
+                    locationId,
+                  }}
+                  id="registrationAdvanced"
+                  pluginData={pluginData}
+                  pluginValues={pluginValues}
+                  onChange={updatePluginValues}
                   isLoading={isLoading}
-                  onChange={updateFormData}
-                  id='registrationAdvanced'
                   multi
                 />
                 <Actions
@@ -211,7 +220,3 @@ const RegistrationCommandsPage = () => {
 };
 
 export default RegistrationCommandsPage;
-
-
-// Ideas:
-// -> SetupRemoteExecution je hovadina, to by se melo jmenovat deploy SSH keys

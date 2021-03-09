@@ -15,7 +15,8 @@ import { translate as __ } from '../../../../common/I18n';
 const ConfigParams = ({
   setupRemoteExecution,
   setupInsights,
-  onChange,
+  handleRemoteExecution,
+  handleInsights,
   isLoading,
 }) => {
   const configParams = useSelector(selectConfigParams);
@@ -28,7 +29,7 @@ const ConfigParams = ({
 
     return (
       <>
-        <FormSelectOption key={0} value='' label={defaultLabel} />
+        <FormSelectOption key={0} value="" label={defaultLabel} />
         <FormSelectOption key={1} value label={__('Yes (override)')} />
         <FormSelectOption key={2} value={false} label={__('No (override)')} />
       </>
@@ -38,12 +39,12 @@ const ConfigParams = ({
   return (
     <>
       <FormGroup
-        label='Setup Rex'
+        label="Setup Rex"
         isRequired
         labelIcon={
           <Popover bodyContent={<div>TODO</div>}>
             <button
-              className='pf-c-form__group-label-help'
+              className="pf-c-form__group-label-help"
               onClick={e => e.preventDefault()}
             >
               <HelpIcon noVerticalAlign />
@@ -53,9 +54,9 @@ const ConfigParams = ({
       >
         <FormSelect
           value={setupRemoteExecution}
-          onChange={v => onChange({ setupRemoteExecution: v })}
-          className='without_select2'
-          id='registration_setup_remote_execution'
+          onChange={v => handleRemoteExecution(v)}
+          className="without_select2"
+          id="registration_setup_remote_execution"
           isDisabled={isLoading}
           isRequired
         >
@@ -63,12 +64,12 @@ const ConfigParams = ({
         </FormSelect>
       </FormGroup>
       <FormGroup
-        label='Setup Insights'
+        label="Setup Insights"
         isRequired
         labelIcon={
           <Popover bodyContent={<div>TODO</div>}>
             <button
-              className='pf-c-form__group-label-help'
+              className="pf-c-form__group-label-help"
               onClick={e => e.preventDefault()}
             >
               <HelpIcon noVerticalAlign />
@@ -78,9 +79,9 @@ const ConfigParams = ({
       >
         <FormSelect
           value={setupInsights}
-          onChange={v => onChange({ setupInsights: v })}
-          className='without_select2'
-          id='registration_setup_insights'
+          onChange={v => handleInsights(v)}
+          className="without_select2"
+          id="registration_setup_insights"
           isDisabled={isLoading}
           isRequired
         >

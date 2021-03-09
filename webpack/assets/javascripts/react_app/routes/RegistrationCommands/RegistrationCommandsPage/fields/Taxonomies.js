@@ -25,35 +25,32 @@ const Taxonomies = ({
 
   return (
     <>
-      <FormGroup
-        label='Organization'
-        isRequired
-        fieldId='registration_organization'
-      >
+      <FormGroup label="Organization" isRequired fieldId="reg_organization">
         <FormSelect
           value={organizationId}
           onChange={v => handleOrganization(v)}
-          className='without_select2'
-          id='registration_organization_select'
+          className="without_select2"
+          id="reg_organization_select"
           isDisabled={isLoading}
           isRequired
         >
-          <FormSelectOption value='' label={__('Any Organization')} />
+          <FormSelectOption value="" label={__('Any Organization')} />
           {organizations.map((o, i) => (
             <FormSelectOption key={i} value={o.id} label={o.name} />
           ))}
         </FormSelect>
       </FormGroup>
-      <FormGroup label='Location' isRequired fieldId='registration_location'>
+
+      <FormGroup label="Location" isRequired fieldId="reg_location">
         <FormSelect
           value={locationId}
           onChange={v => handleLocation(v)}
-          className='without_select2'
-          id='registration_location_select'
+          className="without_select2"
+          id="reg_location_select"
           isDisabled={isLoading}
           isRequired
         >
-          <FormSelectOption value='' label={__('Any Location')} />
+          <FormSelectOption value="" label={__('Any Location')} />
           {locations.map((l, i) => (
             <FormSelectOption key={i} value={l.id} label={l.name} />
           ))}

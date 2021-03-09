@@ -6,13 +6,13 @@ import { HelpIcon } from '@patternfly/react-icons';
 
 import { translate as __ } from '../../../../common/I18n';
 
-const Insecure = ({ value, handleInsecure, isLoading }) => (
+const Insecure = ({ insecure, handleInsecure, isLoading }) => (
   <FormGroup
-    fieldId='registration_insecure'
+    fieldId="reg_insecure"
     labelIcon={
       <Popover bodyContent={<div>TODO</div>}>
         <button
-          className='pf-c-form__group-label-help'
+          className="pf-c-form__group-label-help"
           onClick={e => e.preventDefault()}
         >
           <HelpIcon noVerticalAlign />
@@ -23,10 +23,10 @@ const Insecure = ({ value, handleInsecure, isLoading }) => (
     <Checkbox
       label={
         <span>
-          Insecure{' '}
+          {__('Insecure')}{' '}
           <Popover bodyContent={<div>TODO</div>}>
             <button
-              className='pf-c-form__group-label-help'
+              className="pf-c-form__group-label-help"
               onClick={e => e.preventDefault()}
             >
               <HelpIcon noVerticalAlign />
@@ -34,10 +34,10 @@ const Insecure = ({ value, handleInsecure, isLoading }) => (
           </Popover>
         </span>
       }
-      id='registration_insecure_input'
-      onChange={() => handleInsecure({ insecure: !value })}
+      id="reg_insecure_input"
+      onChange={() => handleInsecure(!insecure)}
       isDisabled={isLoading}
-      isChecked={value}
+      isChecked={insecure}
     />
   </FormGroup>
 );

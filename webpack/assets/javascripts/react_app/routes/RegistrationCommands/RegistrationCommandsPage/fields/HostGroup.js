@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import React from 'react';
+import { useSelector } from 'react-redux';
 
 import {
   FormGroup,
@@ -11,23 +11,19 @@ import { HelpIcon } from '@patternfly/react-icons';
 
 import { translate as __ } from '../../../../common/I18n';
 import { selectHostGroups } from '../RegistrationCommandsPageSelectors';
+import { emptyOption } from '../RegistrationCommandsPageHelpers';
 
 const HostGroup = ({ hostGroupId, handleHostGroup, isLoading }) => {
   const hostGroups = useSelector(selectHostGroups);
-  const emptyOptionLabel = () => {
-    if (hostGroups.length > 0) {
-      return '';
-    }
-    return 'Nothing to select.';
-  };
 
   return (
     <FormGroup
-      label='Host Group'
+      label={__('Host Group')}
+      fieldId="reg_host_group"
       labelIcon={
         <Popover bodyContent={<div>TODO</div>}>
           <button
-            className='pf-c-form__group-label-help'
+            className="pf-c-form__group-label-help"
             onClick={e => e.preventDefault()}
           >
             <HelpIcon noVerticalAlign />
@@ -38,11 +34,11 @@ const HostGroup = ({ hostGroupId, handleHostGroup, isLoading }) => {
       <FormSelect
         value={hostGroupId}
         onChange={v => handleHostGroup(v)}
-        className='without_select2'
-        id='registration_host_group'
+        className="without_select2"
+        id="reg_host_group_select"
         isDisabled={isLoading || hostGroups.length === 0}
       >
-        <FormSelectOption value='' label={emptyOptionLabel()} />
+        {emptyOption(hostGroups.length)}
         {hostGroups.map((hg, i) => (
           <FormSelectOption key={i} value={hg.id} label={hg.name} />
         ))}
