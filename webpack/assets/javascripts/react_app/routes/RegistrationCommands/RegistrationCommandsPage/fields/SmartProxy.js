@@ -21,7 +21,11 @@ const SmartProxy = ({ smartProxyId, handleSmartProxy, isLoading }) => {
       label={__('Smart Proxy')}
       fieldId="reg_smart_proxy"
       labelIcon={
-        <Popover bodyContent={<div>TODO</div>}>
+        <Popover
+          bodyContent={__(
+            'Only Smart Proxies with enabled Registration module are available'
+          )}
+        >
           <button
             className="pf-c-form__group-label-help"
             onClick={e => e.preventDefault()}

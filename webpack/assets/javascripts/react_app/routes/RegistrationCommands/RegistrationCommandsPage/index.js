@@ -60,9 +60,6 @@ const RegistrationCommandsPage = () => {
   const [pluginValues, setPluginValues] = useState({});
 
   const updatePluginValues = data => {
-    console.log('updatePluginValues')
-    console.log(data)
-    console.log({ ...pluginValues, ...data })
     setPluginValues({ ...pluginValues, ...data });
   };
 
@@ -86,7 +83,7 @@ const RegistrationCommandsPage = () => {
       locationId,
       hostGroupId,
       operatingSystemId,
-      ...pluginData,
+      ...pluginValues,
     };
 
     dispatch(post(commandAction(params)));
@@ -120,7 +117,7 @@ const RegistrationCommandsPage = () => {
   return (
     <PageLayout header={__('Register Host')} searchable={false}>
       <Grid>
-        <GridItem span={4}>
+        <GridItem span={6}>
           <Form onSubmit={e => submit(e)}>
             {apiStatusData === STATUS.ERROR && (
               <Alert
@@ -204,13 +201,13 @@ const RegistrationCommandsPage = () => {
                   isLoading={isLoading}
                   multi
                 />
-                <Actions
-                  isDisabled={isLoading || invalidFields.length > 0}
-                  isGenerating={isGenerating}
-                  submit={submit}
-                />
               </>
             )}
+            <Actions
+              isDisabled={isLoading || invalidFields.length > 0}
+              isGenerating={isGenerating}
+              submit={submit}
+            />
             <Command />
           </Form>
         </GridItem>

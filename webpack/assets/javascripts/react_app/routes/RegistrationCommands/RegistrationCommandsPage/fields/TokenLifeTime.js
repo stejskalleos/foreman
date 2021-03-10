@@ -18,7 +18,7 @@ const TokenLifeTime = ({ value, onChange, handleInvalidFields, isLoading }) => {
 
   return (
     <FormGroup
-      label={__('Token Life Time')}
+      label={__('Token Life Time (hours)')}
       validated={isValid(value) ? 'default' : 'error'}
       helperTextInvalid={sprintf(
         'Token life time value must be between %s and %s hours (ten years).',
@@ -28,7 +28,15 @@ const TokenLifeTime = ({ value, onChange, handleInvalidFields, isLoading }) => {
       isRequired
       fieldId="registration_token_life_time"
       labelIcon={
-        <Popover bodyContent={<div>TODO</div>}>
+        <Popover
+          bodyContent={
+            <div>
+              {__(
+                'Expiration of the authorization token. TODO: Max & min values'
+              )}
+            </div>
+          }
+        >
           <button
             className="pf-c-form__group-label-help"
             onClick={e => e.preventDefault()}

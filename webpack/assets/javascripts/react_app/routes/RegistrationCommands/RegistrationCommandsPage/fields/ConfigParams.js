@@ -42,7 +42,15 @@ const ConfigParams = ({
         label="Setup Rex"
         isRequired
         labelIcon={
-          <Popover bodyContent={<div>TODO</div>}>
+          <Popover
+            bodyContent={
+              <div>
+                {__(
+                  'If set to "Yes", SSH keys will be installed on the registered host. The inherited value is based on the `host_registration_remote_execution` parameter. It can be inherited e.g. from host group, operating system, organization. When overidden, the selected value will be stored on host parameter level.'
+                )}
+              </div>
+            }
+          >
             <button
               className="pf-c-form__group-label-help"
               onClick={e => e.preventDefault()}
@@ -67,7 +75,15 @@ const ConfigParams = ({
         label="Setup Insights"
         isRequired
         labelIcon={
-          <Popover bodyContent={<div>TODO</div>}>
+          <Popover
+            bodyContent={
+              <div>
+                {__(
+                  'If set to "Yes", Insights client will be installed and registered on Red Hat family operating systems. It has no effect on other OS families that do not support it. The inherited value is based on the `host_registration_insights` parameter. It can be inherited e.g. from host group, operating system, organization. When overidden, the selected value will be stored on host parameter level.'
+                )}
+              </div>
+            }
+          >
             <button
               className="pf-c-form__group-label-help"
               onClick={e => e.preventDefault()}

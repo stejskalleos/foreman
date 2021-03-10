@@ -1,11 +1,14 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 
-import { Alert, FormGroup } from '@patternfly/react-core';
+import {
+  Alert,
+  FormGroup,
+  ClipboardCopy,
+  ClipboardCopyVariant,
+} from '@patternfly/react-core';
 import { translate as __ } from '../../../../common/I18n';
 import { STATUS } from '../../../../constants';
-
-import ClipboardCopy from '../../../../components/common/ClipboardCopy';
 
 import {
   selectAPIStatusCommand,
@@ -28,8 +31,15 @@ const Command = () => {
       );
     case STATUS.RESOLVED:
       return (
-        <FormGroup>
-          <ClipboardCopy text={command} />
+        <FormGroup label={__('Registration command')}>
+          <ClipboardCopy
+            variant={ClipboardCopyVariant.expansion}
+            isReadOnly
+            isCode
+            isExpanded
+          >
+            {command}
+          </ClipboardCopy>
         </FormGroup>
       );
     default:
