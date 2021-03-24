@@ -10,6 +10,7 @@ import {
   Tabs,
   TabTitleText,
 } from '@patternfly/react-core';
+import { HelpIcon } from '@patternfly/react-icons';
 
 import { translate as __ } from '../../../common/I18n';
 import { get, post } from '../../../redux/API';
@@ -158,7 +159,21 @@ const RegistrationCommandsPage = () => {
   }, [dispatch, hostGroupId, operatingSystemId]);
 
   return (
-    <PageLayout header={__('Register Host')} searchable={false}>
+    <PageLayout
+      header={__('Register Host')}
+      searchable={false}
+      toolbarButtons={
+        <a href="https://docs.theforeman.org/nightly/Managing_Hosts/index-foreman-el.html#registering-a-host-to-project-using-the-global-registration-template_managing-hosts"
+           target="_blank"
+           className={'pf-c-button pf-m-secondary pf-m-small'}
+           >
+
+          <HelpIcon />
+             {' '}
+             {__('Documentation')}
+           </a>
+      }
+      >
       <Grid>
         <GridItem span={8}>
           <Form
