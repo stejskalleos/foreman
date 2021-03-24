@@ -90,7 +90,7 @@ if [ x$ID = xrhel ] || [ x$ID = xcentos ]; then
 
     rm -f $CONSUMER_RPM
 
-    subscription-manager register --org='<%= @organization.label %>' --activationkey='<%= activation_keys %>'<%= ' --force' if @force %> || exit 1
+    subscription-manager register <%= '--force' if @force %> --org='<%= @organization.label %>' --activationkey='<%= activation_keys %>' || <%= @ignore_subman_errors ? 'true' : 'exit 1' %>
     register_katello_host | bash
 else
     register_host | bash
