@@ -6,7 +6,7 @@ model: ProvisioningTemplate
 #!/bin/sh
 <%
     headers = ["-H 'Authorization: Bearer #{@auth_token}'"]
-    activation_keys = [(@hostgroup.params['kt_activation_keys'] if @hostgroup), @activation_key].compact.join(',')
+    activation_keys = [(@hostgroup.params['kt_activation_keys'] if @hostgroup), @activation_keys].compact.join(',')
 -%>
 
 # Rendered with following template parameters:
@@ -18,6 +18,7 @@ model: ProvisioningTemplate
 <%= "\n# Setup Insights: [#{@setup_insights}]" unless @setup_insights.nil? -%>
 <%= "\n# Setup Remote Execution: [#{@setup_remote_execution}]" unless @setup_remote_execution.nil? -%>
 <%= "\n# Remote execution interface: [#{@remote_execution_interface}]" if @remote_execution_interface.present? -%>
+<%= "\n# Activation keys: [#{activation_keys}]" if activation_keys.present? -%>
 
 
 if ! [ $(id -u) = 0 ]; then
@@ -71,6 +72,9 @@ if [ x$ID = xrhel ] || [ x$ID = xcentos ]; then
 <%= "          --data 'remote_execution_interface=#{@remote_execution_interface}' \\\n" if @remote_execution_interface.present? -%>
 
 }
+    <% if @force -%>
+    yum remove -y katello-ca-consumer*
+    <% end -%>
 
     CONSUMER_RPM=$(mktemp --suffix .rpm)
     curl --silent --output $CONSUMER_RPM <%= subscription_manager_configuration_url(hostname: @url_host) %>
@@ -86,7 +90,7 @@ if [ x$ID = xrhel ] || [ x$ID = xcentos ]; then
 
     rm -f $CONSUMER_RPM
 
-    subscription-manager register --org='<%= @organization.label %>' --activationkey='<%= activation_keys %>' || exit 1
+    subscription-manager register --org='<%= @organization.label %>' --activationkey='<%= activation_keys %>'<%= ' --force' if @force %> || exit 1
     register_katello_host | bash
 else
     register_host | bash

@@ -28,7 +28,6 @@ class RegistrationCommandsController < ApplicationController
   end
 
   def create
-    sleep 0.5
     render json: { command: command }
   end
 

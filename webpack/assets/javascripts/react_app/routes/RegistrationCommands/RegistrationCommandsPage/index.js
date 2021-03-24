@@ -108,8 +108,8 @@ const RegistrationCommandsPage = () => {
     const params = {
       organizationId,
       locationId,
-      hostGroupId,
-      operatingSystemId,
+      hostgroupId: hostGroupId,
+      operatingsystemId: operatingSystemId,
       smartProxyId,
       insecure,
       setupRemoteExecution,
