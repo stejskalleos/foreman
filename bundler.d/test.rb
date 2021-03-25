@@ -19,5 +19,12 @@ group :test do
   gem 'rfauxfactory', '~> 0.1', '>= 0.1.5'
   gem 'robottelo_reporter', '~> 0.1'
   gem 'theforeman-rubocop', '~> 0.0.6', require: false
+
   gem 'webmock'
+  gem 'pry'
+  gem 'pry-rails'
+  gem 'pry-byebug'
+  gem 'pry-doc'
+  gem 'pry-stack_explorer'
+  gem 'pry-remote'
 end

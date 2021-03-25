@@ -13,15 +13,14 @@ class RegistrationCommandsController < ApplicationController
     }
   end
 
-  # Rename to operatingsystem_template
-  def os_template
+  def operatingsystem_template
     os = Operatingsystem.authorized(:view_operatingsystems).find(params[:id])
     template_kind = TemplateKind.find_by(name: 'host_init_config')
-    default_template = os.os_default_templates.find_by(template_kind: template_kind)
-    provisioning_template = default_template&.provisioning_template
+    template = os.os_default_templates
+                 .find_by(template_kind: template_kind)&.provisioning_template
 
-    if provisioning_template
-      render json: { template: { name: provisioning_template.name, path: edit_provisioning_template_path(provisioning_template) } }
+    if template
+      render json: { template: { name: template.name, path: edit_provisioning_template_path(template) } }
     else
       render json: { template: { name: nil, os_path: edit_operatingsystem_path(os)} }
     end
@@ -53,6 +52,7 @@ class RegistrationCommandsController < ApplicationController
     end
   end
 
+  # Extension point for plugins
   def plugin_data
     {}
   end

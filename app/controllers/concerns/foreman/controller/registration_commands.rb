@@ -5,7 +5,7 @@ module Foreman::Controller::RegistrationCommands
 
   def command
     args_query = "?#{registration_args.to_query}"
-    "curl#{insecure} '#{endpoint}#{args_query if args_query != '?'}' #{command_headers} | bash"
+    "curl#{insecure} -s '#{endpoint}#{args_query if args_query != '?'}' #{command_headers} | bash"
   end
 
   def registration_args
@@ -30,11 +30,11 @@ module Foreman::Controller::RegistrationCommands
 
   def command_headers
     jwt_args = {
-      scope: [{ controller: :registration, actions: [:global, :host] }]
+      scope: [{ controller: :registration, actions: [:global, :host] }],
     }
 
-    if registration_params['jwt_expiration'] && registration_params['jwt_expiration'] != 'unlimited'
-      jwt_args.merge!({ expiration: registration_params['jwt_expiration'].to_i.hours.to_i })
+    if registration_params['jwt_expiration'].present? && registration_params['jwt_expiration'] != 'unlimited'
+      jwt_args[:expiration] = registration_params['jwt_expiration'].to_i.hours.to_i
     end
 
     "-H 'Authorization: Bearer #{User.current.jwt_token!(**jwt_args)}'"
