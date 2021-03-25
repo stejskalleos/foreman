@@ -49,6 +49,8 @@ const General = ({
 
     <OperatingSystem
       operatingSystemId={operatingSystemId}
+      hostGroupId={hostGroupId}
+      hostGroups={hostGroups}
       handleOperatingSystem={handleOperatingSystem}
       handleInvalidField={handleInvalidField}
       operatingSystems={operatingSystems}
@@ -78,13 +80,16 @@ General.propTypes = {
   smartProxies: PropTypes.array,
   locations: PropTypes.array,
   handleOrganization: PropTypes.func.isRequired,
-  operatingSystemTemplate: PropTypes.string,
   locationId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   handleLocation: PropTypes.func.isRequired,
   hostGroupId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   hostGroups: PropTypes.array,
   handleHostGroup: PropTypes.func.isRequired,
   operatingSystemId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  operatingSystemTemplate: PropTypes.oneOfType([
+    PropTypes.object,
+    PropTypes.string,
+  ]),
   handleOperatingSystem: PropTypes.func.isRequired,
   smartProxyId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   handleSmartProxy: PropTypes.func.isRequired,

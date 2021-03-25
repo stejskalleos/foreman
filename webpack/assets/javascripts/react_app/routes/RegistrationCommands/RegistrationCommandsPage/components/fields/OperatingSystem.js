@@ -1,3 +1,5 @@
+/* eslint-disable camelcase */
+
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
@@ -27,16 +29,32 @@ const OperatingSystem = ({
   operatingSystemTemplate,
   handleOperatingSystem,
   handleInvalidField,
+  hostGroupId,
+  hostGroups,
   isLoading,
 }) => {
   const dispatch = useDispatch();
 
+  // Get info about host-init-config template
   useEffect(() => {
     if (operatingSystemId) {
       dispatch(get(operatingSystemTemplateAction(operatingSystemId)));
     }
   }, [dispatch, operatingSystemId]);
 
+  // Handle hostGroupId change: reset selected OS & get info about host-init-config-template
+  useEffect(() => {
+    if (hostGroupId !== undefined) {
+      const hostGroupOsId = hostGroups.find(
+        hg => `${hg.id}` === `${hostGroupId}`
+      )?.operatingsystem_id;
+
+      handleOperatingSystem('');
+      dispatch(get(operatingSystemTemplateAction(hostGroupOsId)));
+    }
+  }, [dispatch, hostGroupId, handleOperatingSystem]);
+
+  // Validate field
   useEffect(() => {
     if (operatingSystemTemplate !== undefined) {
       handleInvalidField('Operating System', !!operatingSystemTemplate?.name);
@@ -49,7 +67,13 @@ const OperatingSystem = ({
   return (
     <FormGroup
       label={__('Operating System')}
-      helperText={osHelperText(operatingSystemId, operatingSystemTemplate)}
+      helperText={osHelperText(
+        operatingSystemId,
+        operatingSystems,
+        hostGroupId,
+        hostGroups,
+        operatingSystemTemplate
+      )}
       labelIcon={
         <Popover bodyContent={<div>TODO</div>}>
           <button
@@ -81,10 +105,12 @@ const OperatingSystem = ({
 
 OperatingSystem.propTypes = {
   operatingSystemId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  hostGroupId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   handleOperatingSystem: PropTypes.func.isRequired,
   handleInvalidField: PropTypes.func.isRequired,
   isLoading: PropTypes.bool.isRequired,
   operatingSystems: PropTypes.array,
+  hostGroups: PropTypes.array,
   operatingSystemTemplate: PropTypes.oneOfType([
     PropTypes.object,
     PropTypes.string,
@@ -93,7 +119,9 @@ OperatingSystem.propTypes = {
 
 OperatingSystem.defaultProps = {
   operatingSystemId: '',
+  hostGroupId: '',
   operatingSystems: [],
+  hostGroups: [],
   operatingSystemTemplate: {},
 };
 

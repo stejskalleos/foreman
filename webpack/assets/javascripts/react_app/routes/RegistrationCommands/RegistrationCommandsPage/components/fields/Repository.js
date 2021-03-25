@@ -14,9 +14,6 @@ const Repository = ({
   isLoading,
 }) => (
   <>
-    {console.log('REPOSITORY')}
-    {console.log(repo)}
-    {console.log(repoGpg)}
     <FormGroup
       label={__('Repository')}
       fieldId="reg_smart_proxy"

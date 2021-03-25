@@ -177,8 +177,8 @@ const RegistrationCommandsPage = () => {
         </a>
       }
     >
-      <Grid sm={12} md={7}>
-        <GridItem>
+      <Grid>
+        <GridItem span={8}>
           <Form
             onSubmit={e => handleSubmit(e)}
             className="registration"
