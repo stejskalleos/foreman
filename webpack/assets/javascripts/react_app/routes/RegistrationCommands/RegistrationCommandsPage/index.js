@@ -79,6 +79,8 @@ const RegistrationCommandsPage = () => {
   const [setupRemoteExecution, setSetupRemoteExecution] = useState('');
   const [setupInsights, setSetupInsights] = useState('');
   const [jwtExpiration, setJwtExpiration] = useState(4);
+  const [repo, setRepo] = useState('');
+  const [repoGpg, setRepoGpg] = useState('');
   const invalidFields = useSelector(selectInvalidFields);
 
   // Command
@@ -116,6 +118,8 @@ const RegistrationCommandsPage = () => {
       setupRemoteExecution,
       setupInsights,
       jwtExpiration,
+      repo,
+      repoGpg,
       ...pluginValues,
     };
 
@@ -163,17 +167,16 @@ const RegistrationCommandsPage = () => {
       header={__('Register Host')}
       searchable={false}
       toolbarButtons={
-        <a href="https://docs.theforeman.org/nightly/Managing_Hosts/index-foreman-el.html#registering-a-host-to-project-using-the-global-registration-template_managing-hosts"
-           target="_blank"
-           className={'pf-c-button pf-m-secondary pf-m-small'}
-           >
-
-          <HelpIcon />
-             {' '}
-             {__('Documentation')}
-           </a>
+        <a
+          href="https://docs.theforeman.org/nightly/Managing_Hosts/index-foreman-el.html#registering-a-host-to-project-using-the-global-registration-template_managing-hosts"
+          target="_blank"
+          rel="noreferrer"
+          className="pf-c-button pf-m-secondary pf-m-small"
+        >
+          <HelpIcon /> {__('Documentation')}
+        </a>
       }
-      >
+    >
       <Grid sm={12} md={7}>
         <GridItem>
           <Form
@@ -198,78 +201,82 @@ const RegistrationCommandsPage = () => {
                 title={<TabTitleText>{__('General fields')}</TabTitleText>}
               >
                 <div className="pf-c-form">
-                <General
-                  organizationId={organizationId}
-                  organizations={organizations}
-                  handleOrganization={setOrganizationId}
-                  locationId={locationId}
-                  locations={locations}
-                  handleLocation={setLocationId}
-                  hostGroupId={hostGroupId}
-                  hostGroups={hostGroups}
-                  handleHostGroup={setHostGroupId}
-                  operatingSystemId={operatingSystemId}
-                  operatingSystems={operatingSystems}
-                  operatingSystemTemplate={operatingSystemTemplate}
-                  handleOperatingSystem={setOperatingSystemId}
-                  smartProxyId={smartProxyId}
-                  smartProxies={smartProxies}
-                  handleSmartProxy={setSmartProxyId}
-                  insecure={insecure}
-                  handleInsecure={setInsecure}
-                  handleInvalidField={handleInvalidField}
-                  invalidFields={invalidFields}
-                  isLoading={isLoading}
-                />
+                  <General
+                    organizationId={organizationId}
+                    organizations={organizations}
+                    handleOrganization={setOrganizationId}
+                    locationId={locationId}
+                    locations={locations}
+                    handleLocation={setLocationId}
+                    hostGroupId={hostGroupId}
+                    hostGroups={hostGroups}
+                    handleHostGroup={setHostGroupId}
+                    operatingSystemId={operatingSystemId}
+                    operatingSystems={operatingSystems}
+                    operatingSystemTemplate={operatingSystemTemplate}
+                    handleOperatingSystem={setOperatingSystemId}
+                    smartProxyId={smartProxyId}
+                    smartProxies={smartProxies}
+                    handleSmartProxy={setSmartProxyId}
+                    insecure={insecure}
+                    handleInsecure={setInsecure}
+                    handleInvalidField={handleInvalidField}
+                    invalidFields={invalidFields}
+                    isLoading={isLoading}
+                  />
 
-                <Slot
-                  id="registrationGeneral"
-                  organizationId={organizationId}
-                  locationId={locationId}
-                  hostGroupId={hostGroupId}
-                  pluginValues={pluginValues}
-                  pluginData={pluginData}
-                  onChange={handlePluginValue}
-                  handleInvalidField={handleInvalidField}
-                  isLoading={isLoading}
-                  multi
-                />
+                  <Slot
+                    id="registrationGeneral"
+                    organizationId={organizationId}
+                    locationId={locationId}
+                    hostGroupId={hostGroupId}
+                    pluginValues={pluginValues}
+                    pluginData={pluginData}
+                    onChange={handlePluginValue}
+                    handleInvalidField={handleInvalidField}
+                    isLoading={isLoading}
+                    multi
+                  />
                 </div>
               </Tab>
               <Tab
                 eventKey={1}
                 title={<TabTitleText>{__('Advanced fields')}</TabTitleText>}
               >
-              <div className="pf-c-form">
-                <Advanced
-                  configParams={configParams}
-                  setupRemoteExecution={setupRemoteExecution}
-                  setupInsights={setupInsights}
-                  handleInsights={setSetupInsights}
-                  handleRemoteExecution={setSetupRemoteExecution}
-                  jwtExpiration={jwtExpiration}
-                  handleJwtExpiration={setJwtExpiration}
-                  handleInvalidField={handleInvalidField}
-                  pluginValues={pluginValues}
-                  handlePluginValue={handlePluginValue}
-                  invalidFields={invalidFields}
-                  organizationId={organizationId}
-                  locationId={locationId}
-                  hostGroupId={hostGroupId}
-                  isLoading={isLoading}
-                />
-                <Slot
-                  id="registrationAdvanced"
-                  organizationId={organizationId}
-                  locationId={locationId}
-                  hostGroupId={hostGroupId}
-                  pluginValues={pluginValues}
-                  pluginData={pluginData}
-                  onChange={handlePluginValue}
-                  handleInvalidField={handleInvalidField}
-                  isLoading={isLoading}
-                  multi
-                />
+                <div className="pf-c-form">
+                  <Advanced
+                    configParams={configParams}
+                    setupRemoteExecution={setupRemoteExecution}
+                    setupInsights={setupInsights}
+                    handleInsights={setSetupInsights}
+                    handleRemoteExecution={setSetupRemoteExecution}
+                    jwtExpiration={jwtExpiration}
+                    handleJwtExpiration={setJwtExpiration}
+                    handleInvalidField={handleInvalidField}
+                    pluginValues={pluginValues}
+                    handlePluginValue={handlePluginValue}
+                    invalidFields={invalidFields}
+                    organizationId={organizationId}
+                    locationId={locationId}
+                    hostGroupId={hostGroupId}
+                    repo={repo}
+                    handleRepo={setRepo}
+                    repoGpg={repoGpg}
+                    handleRepoGpg={setRepoGpg}
+                    isLoading={isLoading}
+                  />
+                  <Slot
+                    id="registrationAdvanced"
+                    organizationId={organizationId}
+                    locationId={locationId}
+                    hostGroupId={hostGroupId}
+                    pluginValues={pluginValues}
+                    pluginData={pluginData}
+                    onChange={handlePluginValue}
+                    handleInvalidField={handleInvalidField}
+                    isLoading={isLoading}
+                    multi
+                  />
                 </div>
               </Tab>
             </Tabs>

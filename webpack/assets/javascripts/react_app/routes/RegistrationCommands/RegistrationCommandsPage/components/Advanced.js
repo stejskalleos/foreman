@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import ConfigParams from './fields/ConfigParams';
+import Repository from './fields/Repository';
 import TokenLifeTime from './fields/TokenLifeTime';
 
 const Advanced = ({
@@ -13,6 +14,10 @@ const Advanced = ({
   jwtExpiration,
   handleJwtExpiration,
   handleInvalidField,
+  repo,
+  handleRepo,
+  repoGpg,
+  handleRepoGpg,
   isLoading,
 }) => (
   <>
@@ -22,6 +27,13 @@ const Advanced = ({
       setupInsights={setupInsights}
       handleInsights={handleInsights}
       handleRemoteExecution={handleRemoteExecution}
+      isLoading={isLoading}
+    />
+    <Repository
+      repo={repo}
+      handleRepo={handleRepo}
+      repoGpg={repoGpg}
+      handleRepoGpg={handleRepoGpg}
       isLoading={isLoading}
     />
     <TokenLifeTime
@@ -42,6 +54,10 @@ Advanced.propTypes = {
   jwtExpiration: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   handleJwtExpiration: PropTypes.func.isRequired,
   handleInvalidField: PropTypes.func.isRequired,
+  repo: PropTypes.string,
+  repoGpg: PropTypes.string,
+  handleRepo: PropTypes.func.isRequired,
+  handleRepoGpg: PropTypes.func.isRequired,
   isLoading: PropTypes.bool.isRequired,
 };
 
@@ -50,6 +66,8 @@ Advanced.defaultProps = {
   setupRemoteExecution: '',
   setupInsights: '',
   jwtExpiration: 4,
+  repo: '',
+  repoGpg: '',
 };
 
 export default Advanced;
