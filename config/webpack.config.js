@@ -234,7 +234,7 @@ module.exports = env => {
       hot: true
     };
     // Source maps
-    config.devtool = 'eval';
+    config.devtool = 'eveval-cheap-module-source-map';
   }
 
   return config;
