@@ -75,7 +75,7 @@ const OperatingSystem = ({
         operatingSystemTemplate
       )}
       labelIcon={
-        <Popover bodyContent={<div>TODO</div>}>
+        <Popover bodyContent={__('Required for registration without subscription manager. Can be specified by Host Group.')}>
           <button
             className="pf-c-form__group-label-help"
             onClick={e => e.preventDefault()}

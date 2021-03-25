@@ -17,7 +17,7 @@ const HostGroup = ({ hostGroupId, hostGroups, handleHostGroup, isLoading }) => (
     label={__('Host Group')}
     fieldId="reg_host_group"
     labelIcon={
-      <Popover bodyContent={<div>TODO</div>}>
+      <Popover bodyContent={__('TODO')}>
         <button
           className="pf-c-form__group-label-help"
           onClick={e => e.preventDefault()}
