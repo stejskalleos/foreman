@@ -1,0 +1,11 @@
+# class RegistrationFactParser
+#   def self.build(type, host)
+#     case type
+#     when :puppet
+#       FactParser.register_fact_parser :puppet, PuppetFactParser, true
+#       HostFactImporter.new(host)
+#     else
+#       # Do something
+#     end
+#   end
+# end

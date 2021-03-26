@@ -157,8 +157,11 @@ module Host
       # we must create interface if it's missing so we can store domain
       build_required_interfaces(managed: false, type: primary_interface_type(parser))
       set_non_empty_values(parser, attributes_to_import_from_facts)
+      binding.pry
       set_interfaces(parser) if parser.parse_interfaces?
+      binding.pry
       set_comment(parser) if parser.has_comment?
+      binding.pry
     end
 
     def set_non_empty_values(parser, methods)

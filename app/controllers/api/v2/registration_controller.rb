@@ -95,18 +95,17 @@ module Api
 
       # Better naming, duh!
       def facts
-        name = params['fqdn'] || params['networking']['fqdn']
+        facts = prepare_facts
 
-        host = Host.find_or_initialize_by(name: name)
+        host = Host.find_or_initialize_by(name: (facts['fqdn'] || facts['networking']['fqdn']))
         host.build = false
         host.managed = false
 
-        facts = params
-        facts[:_type] = :puppet
-
-        # Why do I need to do that?
-        FactParser.register_fact_parser :puppet, PuppetFactParser, true
-        HostFactImporter.new(host).import_facts(params.to_unsafe_h)
+        RegistrationFactParser.build(facts['_type'])
+        # binding
+        HostFactImporter.new(host).import_facts(facts.to_unsafe_h)
+      rescue ::Foreman::Exception => e
+        render_error(e.message, status: :unprocessable_entity)
       end
 
       private
@@ -136,6 +135,35 @@ module Api
       # Extension point for plugins
       def host_setup_extension
       end
+
+      def prepare_facts
+        facts = params
+        facts['_type'] = params[:type]
+        # Nemusim resit, o to se postara host_setup_init zejo!
+        # facts['organization_fact'] = Organization.authorized(:view_organizations).find(params['organization_id'])&.title if params['organization_id'].present?
+        # facts['location_fact'] = Location.authorized(:view_locations).find(params['location_id'])&.title if params['location_id'].present?
+
+        if params['type'] == 'ohai'
+          foreman_facts = %w(_type organization_fact location_fact)
+          ohai_filtered = %w(dmi network ipaddress macaddress fips memory kernel lsb os os_version platform platform_version platform_family ip6address cpu hostnamectl init_package hostname fqdn domain root_group)
+          facts.keep_if { |k, _v| (foreman_facts + ohai_filtered).include?(k) }
+        end
+
+        facts
+      end
+    end
+  end
+end
+class RegistrationFactParser
+  def self.build(type)
+    case type
+    when 'puppet'
+      FactParser.register_fact_parser :puppet, PuppetFactParser, true
+    when 'ohai'
+      Foreman::Plugin.fact_importer_registry.register(:ohai, OhaiFactImporter, true)
+      FactParser.register_fact_parser :ohai, OhaiFactParser, true
+    else
+      raise Foreman::Exception.new(N_("Fact parser for [#{type}] not found"))
     end
   end
 end
