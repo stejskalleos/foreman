@@ -102,6 +102,8 @@ class PermissionsList
         ['PersonalAccessToken', 'view_personal_access_tokens'],
         ['PersonalAccessToken', 'create_personal_access_tokens'],
         ['PersonalAccessToken', 'revoke_personal_access_tokens'],
+        [nil, 'generate_json_web_tokens'],
+        [nil, 'invalidate_json_web_tokens'],
         ['Ptable', 'view_ptables'],
         ['Ptable', 'create_ptables'],
         ['Ptable', 'edit_ptables'],

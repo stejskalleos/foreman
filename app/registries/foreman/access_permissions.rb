@@ -632,6 +632,13 @@ Foreman::AccessControl.map do |permission_set|
       :"api/v2/personal_access_tokens" => [:destroy]
   end
 
+  permission_set.security_block :json_web_tokens do |map|
+    map.permission :generate_json_web_tokens,
+      :"api/v2/json_web_tokens" => [:generate]
+    map.permission :invalidate_json_web_tokens,
+      :"api/v2/json_web_tokens" => [:invalidate]
+  end
+
   permission_set.security_block :settings do |map|
     map.permission :view_settings, { :settings => [:index, :show, :auto_complete_search],
                                      :'api/v2/settings' => [:index, :show] }

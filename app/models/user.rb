@@ -473,7 +473,10 @@ class User < ApplicationRecord
       options[:user_id].to_i == id ||
     options[:controller].to_s == 'api/v2/personal_access_tokens' &&
       options[:action] =~ /show|destroy|index|create/ &&
-      options[:user_id].to_i == id
+      options[:user_id].to_i == id ||
+    options[:controller].to_s == 'api/v2/json_web_tokens' &&
+      options[:action] =~ /generate|invalidate/ &&
+      options[:id].to_i == id
   end
 
   def taxonomy_foreign_conditions

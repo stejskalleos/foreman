@@ -213,6 +213,8 @@ Foreman::Application.routes.draw do
           resources :mail_notifications, :only => [:create, :destroy, :update]
           get 'mail_notifications', :to => 'mail_notifications#user_mail_notifications', :on => :member
           get 'extlogin', :to => 'users#extlogin', :on => :collection
+          post 'json_web_tokens', to: 'json_web_tokens#generate', on: :member
+          delete 'json_web_tokens', to: 'json_web_tokens#invalidate', on: :member
         end
       end
 
