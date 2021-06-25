@@ -43,6 +43,7 @@ module Api
 
       before_action :setup_has_many_params, :only => [:create, :update]
       before_action :check_media_type
+      before_action :record_page_view
 
       layout 'api/v2/layouts/index_layout', :only => :index
 

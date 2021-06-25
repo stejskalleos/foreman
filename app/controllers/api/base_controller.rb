@@ -11,6 +11,7 @@ module Api
     before_action :assign_lone_taxonomies, :only => :create
     before_action :add_info_headers, :set_gettext_locale
     before_action :session_expiry, :update_activity_time
+    before_action :record_page_view
     around_action :set_timezone
 
     respond_to :json
@@ -306,6 +307,12 @@ module Api
 
     def log_response_body
       logger.debug { "Body: #{response.body}" }
+    end
+
+    def record_page_view
+      # Add a condition to record only your canonical domain
+      # and use a gem such as crawler_detect to skip bots.
+      ActiveAnalytics.record_request(request)
     end
 
     private
