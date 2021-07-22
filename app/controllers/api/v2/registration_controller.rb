@@ -56,7 +56,7 @@ module Api
           param :hidden_value, :bool
         end
         param :build, :bool
-        param :enabled, :bool, desc: N_("Include this host within Foreman reporting")
+        param :enabled, :bool, desc: N_("Include this host within reporting")
         param :managed, :bool, desc: N_("True/False flag whether a host is managed or unmanaged. Note: this value also determines whether several parameters are required or not")
         param :comment, String, desc: N_("Additional information about this host")
         param :interfaces_attributes, Array, desc: N_("Host's network interfaces.") do
