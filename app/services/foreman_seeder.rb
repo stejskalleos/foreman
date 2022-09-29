@@ -12,7 +12,7 @@ class ForemanSeeder
 
   def initialize
     @seeds = (foreman_seeds + plugin_seeds).sort_by { |seed| seed.split("/").last }
-    @hashed_files = @seeds + templates
+    @hashed_files = @seeds + templates + plugin_job_templates
   end
 
   def foreman_seeds
@@ -22,6 +22,12 @@ class ForemanSeeder
   def plugin_seeds
     Foreman::Plugin.registered_plugins.collect do |name, plugin|
       Dir.glob(plugin.engine.root + 'db/seeds.d/*.rb') if plugin.engine
+    end.flatten.compact
+  end
+
+  def plugin_job_templates
+    Foreman::Plugin.registered_plugins.collect do |name, plugin|
+      Dir.glob(plugin.engine.root + "app/views/#{name.to_s.tr('-', '_')}/job_templates/**/*.erb") if plugin.engine
     end.flatten.compact
   end
 
