@@ -1,101 +1,33 @@
 # HTTPS Development setup
-Tested on Fedora.
-DNS is for foreman.example.com, if you wan't to something different,
- just replace it with domain you like
+Setup for HTTPS Devel setup behind Apache proxy.
+## Certificates
+We will generate certificates with [step tool](https://smallstep.com/docs/step-cli)
 
-## Prerequisities
-
-Packages
+**Installation**
+Download latest `rpm` from the [GitHub](https://github.com/smallstep/cli/releases)
 ```bash
-dnf install httpd mod_ssl
+sudo dnf install -y ./step-cli_*.rpm
 ```
 
-Prepare DNS
+**Create a certificate authority**
+Root CA:
 ```bash
-# /etc/hosts
-12.0.0.1 foreman.example.com
+step certificate create --no-password --insecure --profile root-ca "Example Root CA" root_ca.crt root_ca.key
 ```
 
-## Generate self-signed certificates
+Create a TLS certificate
 ```bash
-mkdir certs && cd certs
+step certificate create foreman.example.com foreman.example.com.crt foreman.example.com.key \
+    --profile leaf --not-after=8760h \
+    --ca ./intermediate_ca.crt --ca-key ./intermediate_ca.key --bundle \
+    --no-password --insecure
 ```
 
-Create certificate authority
+Install the certificate into the system trust store
 ```bash
-openssl req -x509 \
-            -sha256 -days 356 \
-            -nodes \
-            -newkey rsa:2048 \
-            -subj "/CN=foreman.example.com/C=CZ/L=Brno" \
-            -keyout rootCA.key -out rootCA.crt
+step certificate install root_ca.crt
 ```
 
-Create the server private key
-```bash
-openssl genrsa -out server.key 2048
-```
-
-Create certificate signing request
-```bash
-# csr.conf
-[ req ]
-default_bits = 2048
-prompt = no
-default_md = sha256
-req_extensions = req_ext
-distinguished_name = dn
-
-[ dn ]
-C = CZ
-ST = CZ
-L = Brno
-O = The Foreman
-OU = The Foreman DEV
-CN = foreman.example.com
-
-[ req_ext ]
-subjectAltName = @alt_names
-
-[ alt_names ]
-DNS.1 = foreman.example.com
-#DNS.2 = www.foreman.example.com
-#IP.1 = 192.168.1.5
-#IP.2 = 192.168.1.6
-```
-
-Generate certificate signing request (CSR) using server private key
-```bash
-openssl req -new -key server.key -out server.csr -config csr.conf
-```
-
-Create a external file
-```bash
-# cert.conf
-authorityKeyIdentifier=keyid,issuer
-basicConstraints=CA:FALSE
-keyUsage = digitalSignature, nonRepudiation, keyEncipherment, dataEncipherment
-subjectAltName = @alt_names
-
-[alt_names]
-DNS.1 = foreman.example.com
-```
-
-Generate SSL certificate with self signed CA
-```bash
-openssl x509 -req \
-    -in server.csr \
-    -CA rootCA.crt -CAkey rootCA.key \
-    -CAcreateserial -out server.crt \
-    -days 365 \
-    -sha256 -extfile cert.conf
-```
-
-Update CA trust
-```bash
-cp rootCA.crt /etc/pki/ca-trust/source/anchors/
-cp update-ca-trust
-```
 
 ## Configure Apache
 Enable listening on `443` port
@@ -109,7 +41,7 @@ Configure site
 # /etc/httpd/conf.d/foreman.example.com.conf
 
 <VirtualHost *:80>
-  ServerName foreman.coconut.loc
+  ServerName foreman.example.com
 
   ProxyPass / http://127.0.0.1:3000/
   ProxyPassReverse / http://127.0.0.1:3000/
@@ -118,11 +50,11 @@ Configure site
 </VirtualHost>
 
 <VirtualHost *:443>
-  ServerName foreman.coconut.loc
+  ServerName foreman.example.com
 
   SSLEngine on
-  SSLCertificateFile /path/to/certs-folder/foreman.example.com.crt
-  SSLCertificateKeyFile /path/to/certs-folder/foreman.example.com.key
+  SSLCertificateFile /path/to/certs-folder/example.com.crt
+  SSLCertificateKeyFile /path/to/certs-folder/example.com.key
 
   SSLOptions +ExportCertData
 
@@ -142,7 +74,7 @@ Configure site
 Apply changes
 ```bash
 apachectl configtest
-systemctl restart httpd
+service httpd restart
 ```
 
 # Running Foreman
@@ -156,7 +88,6 @@ bundle exec rails server --binding 0.0.0.0 --port 3000
   --https \
   --cert '/path/to/certs-folder/foreman.example.com.crt' \
   --key '/path/to/certs-folder/foreman.example.com.key'
-
 ```
 ## Foreman configuration
 ```yaml
@@ -171,10 +102,11 @@ Foreman settings, in `Authentication` tab:
 * `SSL client verify env`: `HTTP_SSL_CLIENT_VERIFY`
 * `SSL client cert env`: `HTTP_SSL_CLIENT_CERT`
 
-Smart proxy configuration:
+## Smart proxy
+
+Configuration:
 ```yaml
 :foreman_url: https://foreman.example.com
-:log_file: STDOUT
 :http_port: 8080
 :https_port: 8443
 :ssl_certificate: /path/to/certs-folder/foreman.example.com.crt
@@ -184,7 +116,17 @@ Smart proxy configuration:
 :bind_host: ['*']
 ```
 
-# TODO:
-Dynflow
-Ansible
-Note about browser and not reloading the certificate
+Proxy modules:
+```yaml
+# Dynflow
+# Registration
+# Templates
+# Ansible
+```
+
+# TO_TEST:
+* Dynflow
+* Ansible
+* Registration
+* Templates (provisioning)
+
