@@ -1,43 +1,51 @@
-# HTTPS Development setup
-Setup for HTTPS Devel setup behind Apache proxy.
-## Certificates
-We will generate certificates with [step tool](https://smallstep.com/docs/step-cli)
+= HTTPS Development setup
+:toc: right
+:toclevels: 5
+
+[[certificates]]
+== Certificates
+We will use the [step](https://smallstep.com/docs/step-cli) tool for the cer generation.
 
 **Installation**
-Download latest `rpm` from the [GitHub](https://github.com/smallstep/cli/releases)
-```bash
+Download latest the `rpm` from the [GitHub](https://github.com/smallstep/cli/releases)
+[source, bash]
+....
 sudo dnf install -y ./step-cli_*.rpm
-```
+....
 
-**Create a certificate authority**
-Root CA:
-```bash
-step certificate create --no-password --insecure --profile root-ca "Example Root CA" root_ca.crt root_ca.key
-```
+**Create a Root CA**
+[source, bash]
+....
+step certificate create --no-password --insecure --profile root-ca "Foreman Devel Root CA" root_ca.crt root_ca.key
+....
 
-Create a TLS certificate
-```bash
+Create certificates
+[source, bash]
+....
 step certificate create foreman.example.com foreman.example.com.crt foreman.example.com.key \
     --profile leaf --not-after=8760h \
     --ca ./intermediate_ca.crt --ca-key ./intermediate_ca.key --bundle \
     --no-password --insecure
-```
+....
 
 Install the certificate into the system trust store
-```bash
+[source, bash]
+....
 step certificate install root_ca.crt
-```
+....
 
+[[apache]]
+== Apache configuration
 
-## Configure Apache
-Enable listening on `443` port
-```bash
-# conf/httpd.conf
+Enable listening on `443` port in `conf/httpd.conf`
+[source, bash]
+....
 Listen 443
-```
+....
 
-Configure site
-```bash
+Create config file for the Foreman
+[source, text]
+....
 # /etc/httpd/conf.d/foreman.example.com.conf
 
 <VirtualHost *:80>
@@ -69,64 +77,90 @@ Configure site
     ProxyPassReverse http://localhost:3000/
   </Location>
 </VirtualHost>
-```
+....
 
 Apply changes
-```bash
+[source, bash]
+....
 apachectl configtest
 service httpd restart
-```
+....
 
-# Running Foreman
-```
-# Rails
+[[foreman]]
+== Foreman
+
+[[running-foreman]]
+=== Running Foreman
+
+Backend:
+[source, bash]
+....
 bundle exec rails server --binding 0.0.0.0 --port 3000
+....
 
+Frontend
+[source, bash]
+....
 # Webpack
 ./node_modules/.bin/webpack-dev-server-without-h2 --config ./config/webpack.config.js \
   --allowed-hosts foreman.example.com \
   --https \
   --cert '/path/to/certs-folder/foreman.example.com.crt' \
   --key '/path/to/certs-folder/foreman.example.com.key'
-```
-## Foreman configuration
-```yaml
-# config/settings.yaml
-:require_ssl: true
-:webpack_dev_server_https: true
-```
+....
 
-## Smart Proxy authentication
-Foreman settings, in `Authentication` tab:
+[[configuring-foreman]]
+=== Configuring Foreman
+## Foreman configuration
+`config/settings.yaml`
+[source, yaml]
+....
+# :require_ssl: true (TODO: verify provisioning, templates, ansible, remote_execution)
+:webpack_dev_server_https: true
+....
+
+Update settings:
+* `SSL certificate`: `/path/to/certs-folder/foreman.example.com.crt`
+* `SSL CA file`: `/path/to/certs-folder/rootCA.crt`
+* `SSL private key`: `/path/to/certs-folder/foreman.example.com.key`
 * `SSL client DN env`: `HTTP_SSL_CLIENT_S_DN`
 * `SSL client verify env`: `HTTP_SSL_CLIENT_VERIFY`
 * `SSL client cert env`: `HTTP_SSL_CLIENT_CERT`
 
-## Smart proxy
-
-Configuration:
-```yaml
+[[smart-proxy]]
+== Smart Proxy
+`config/settings.yml`
+[source, yaml]
+....
 :foreman_url: https://foreman.example.com
 :http_port: 8080
 :https_port: 8443
 :ssl_certificate: /path/to/certs-folder/foreman.example.com.crt
 :ssl_ca_file: /path/to/certs-folder/rootCA.crt
 :ssl_private_key: /path/to/certs-folder/foreman.example.com.key
+....
 
-:bind_host: ['*']
-```
+[[proxy-modules]]
+=== Modules
+**Registration**
+[source, yaml]
+....
+---
+:enabled: true
+:registration_url: "https://foreman.example.com:8443"
+....
 
-Proxy modules:
-```yaml
-# Dynflow
-# Registration
-# Templates
-# Ansible
-```
+(TODO:) **Dynflow (Remote execution)**
+[source, yaml]
+....
+....
 
-# TO_TEST:
-* Dynflow
-* Ansible
-* Registration
-* Templates (provisioning)
+(TODO:) **Ansible**
+[source, yaml]
+....
+....
 
+(TODO:) **Templates**
+[source, yaml]
+....
+....
