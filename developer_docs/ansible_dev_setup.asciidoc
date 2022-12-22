@@ -67,6 +67,12 @@ Enable feature
 :enabled: true
 ....
 
+Set path to `ansible-runner-environment`
+[source, bash]
+....
+# ~/.bash_rc
+export SMART_PROXY_ANSIBLE_ENVIRONMENT_WRAPPER="/home/lstejska/projects/smart_proxy_ansible/bin/ansible-runner-environment.sh"
+....
 
 Run all services
 [source, bash]
