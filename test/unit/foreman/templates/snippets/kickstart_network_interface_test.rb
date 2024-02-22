@@ -52,10 +52,7 @@ class KickstartNetworkInterfaceTest < ActiveSupport::TestCase
     end
 
     test 'should skip non-managed interfaces' do
-      iface = FactoryBot.build(:nic_base, :primary => true)
-
-      require 'pry-byebug'
-      binding.pry
+      iface = FactoryBot.build(:nic_base, primary: true, managed: false)
 
       actual = render_template(
         iface,
@@ -65,7 +62,7 @@ class KickstartNetworkInterfaceTest < ActiveSupport::TestCase
         static6: false
       )
 
-      assert_nil actual
+      assert_empty actual
     end
 
     test 'should create bond interface' do

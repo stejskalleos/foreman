@@ -114,12 +114,16 @@ keyboard <%= host_param('keyboard') || 'us' %>
 # start with provisioning interface, then other non-bond interfaces and the bonds at the end
 @host.managed_interfaces.sort_by { |iface| iface.bond? ? 0 : iface.provision? ? 20 : 10 }.each do |iface|
 -%>
-<%= kickstart_network(
-      iface,
-      host: @host,
-      use_slaac: host_param_true?('use-slaac'),
-      static: @static,
-      static6: @static6) %>
+<%= snippet(
+      'kickstart_network_interface',
+      variables: {
+        iface: iface,
+        host: @host,
+        use_slaac: host_param_true?('use-slaac'),
+        static: @static,
+        static6: @static6
+      }
+    ) -%>
 <%
 end
 -%>

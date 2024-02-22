@@ -7,10 +7,10 @@ kind: snippet
 description: |
   Generates network directive for a given interface. It is not expected to be used directly.
 -%>
-
-<%# Variables: iface, host, use_slaac, static, static6 -%>
-
-<%if @iface.managed? %>
+<%#
+  # Variables: iface, host, use_slaac, static, static6
+-%>
+<%if @iface.managed? -%>
 <%
 network_options = []
 nameservers = []
@@ -36,7 +36,9 @@ end
 raise("IPv4 and IPv6 subnets have different MTU") if subnet4 && subnet6 && subnet4.mtu.present? && subnet6.mtu.present? && subnet4.mtu != subnet6.mtu
 
 # mtu method is taking into account both ipv4 and ipv6 stacks
-network_options.push("--mtu=#{@iface.mtu}") if @iface.mtu
+if @iface.respond_to?(:mtu)
+  network_options.push("--mtu=#{@iface.mtu}") if @iface.mtu
+end
 
 # IPv4
 if subnet4
@@ -93,6 +95,6 @@ if @iface.domain && @host.operatingsystem.meets_requirement(fedora: 39, rhel: 10
   network_options.push("--ipv4-dns-search=#{@iface.domain}") if subnet4
   network_options.push("--ipv6-dns-search=#{@iface.domain}") if subnet6
 end
-%>
-<%= "network #{network_options.join(' ')}" %>
-<% end %>
+-%>
+<%= "network #{network_options.join(' ')}" -%>
+<% end -%>
