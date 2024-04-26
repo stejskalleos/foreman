@@ -1,0 +1,17 @@
+module Foreman
+  module Stats
+    module Collectors
+      module Users
+        class Count < Foreman::Stats::Collector
+          def self.collect
+            @value = 23
+          end
+
+          def self.result
+            { name: @name, value: @value }
+          end
+        end
+      end
+    end
+  end
+end
