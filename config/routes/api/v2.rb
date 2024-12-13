@@ -431,6 +431,10 @@ Foreman::Application.routes.draw do
       put 'auth_source_ldaps/(:id)/test', :to => 'auth_source_ldaps#test'
       post 'registration_commands', to: 'registration_commands#create'
       get 'host_statuses', :to => 'host_statuses#index'
+
+      scope 'red_hat_boot_isos' do
+        post 'generate', to: 'red_hat_boot_isos#generate'
+      end
     end
   end
 end
