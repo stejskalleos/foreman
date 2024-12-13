@@ -3,26 +3,34 @@ module Api
     class RedHatBootIsosController < V2::BaseController
       DESTINATION_DIR = "/home/lstejska/isos/netboot/foreman".freeze
 
-      before_action :set_source, only: [:generate]
-      before_action :set_name, only: [:generate]
+      before_action :set_source,
+        :set_output_path,
+        :inst_ks_url, only: [:generate]
+
       before_action :find_smart_proxy, only: [:generate], if: -> { generate_params[:smart_proxy_id].present? }
-      before_action :inst_ks_url, only: [:generate]
       before_action :nameservers, only: [:generate], if: -> { generate_params[:subnet_ids].present? }
 
-      # Params:
-      # source_iso
-      # smart_proxy
-      # nameserver
       def generate
-        binding.pry
+        result = `#{mkksiso_command} 2>&1`
 
-        render json: { message: "OK" }
+        # Cannot use $?.exitstatus because it's always 0
+        if File.exist?(@output_path)
+          render json: {
+            message: "ISO have been sucessfuly generated.",
+            path: @output_path,
+          }
+        else
+          render json: {
+            message: "Error during ISO generation.",
+            error: result,
+          }, status: :internal_server_error
+        end
       end
 
       private
 
       def generate_params
-        params.permit(:name, :source, :smart_proxy_id, { subnet_ids: [] })
+        params.permit(:source, :name, :smart_proxy_id, { subnet_ids: [] })
       end
 
       def set_source
@@ -41,10 +49,6 @@ module Api
         end
 
         @source = value
-      end
-
-      def set_name
-        @name = generate_params['name'] || "#{Time.now.to_i}_#{File.basename(@source)}"
       end
 
       def find_smart_proxy
@@ -69,11 +73,15 @@ module Api
         @nameservers = subnets.map { |subnet| "nameserver=#{subnet}" }.join(" ")
       end
 
+      def set_output_path
+        basename = "#{generate_params['name'].parameterize}.iso" || File.basename(@source)
+        @output_path = "#{DESTINATION_DIR}/#{Time.now.to_i}_#{basename}"
+      end
+
       def mkksiso_command
         kernel_attrs = "inst.ks=#{@inst_ks_url} inst.ks.sendmac #{@nameservers}"
-        output_file = "#{DESTINATION_DIR}/#{@name}"
 
-        "/usr/bin/mkksiso --cmdline \"#{kernel_attrs}\" #{@source} #{output_file}"
+        "/usr/bin/mkksiso --cmdline \"#{kernel_attrs}\" #{@source} #{@output_path}"
       end
     end
   end

@@ -9,7 +9,7 @@ class RedHatBootIso < ApplicationRecord
   validates :name, uniqueness: true
   # TODO: Rename to source_iso
   validates :source_path, presence: true
-  # Todo: Rename to file_name
+  # TODO: Rename to file_name
   validates :file_path, presence: true
   # TODO: Result of generate action + logs
 
