@@ -18,6 +18,7 @@ Object {
             "packages": "",
             "repoData": Array [],
             "setupInsights": "",
+            "setupInsightsInventory": "",
             "setupRemoteExecution": "",
             "smartProxyId": undefined,
             "updatePackages": false,

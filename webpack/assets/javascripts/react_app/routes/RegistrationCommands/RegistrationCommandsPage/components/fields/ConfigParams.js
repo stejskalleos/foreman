@@ -14,8 +14,10 @@ const ConfigParams = ({
   configParams,
   setupRemoteExecution,
   setupInsights,
+  setupInsightsInventory,
   handleRemoteExecution,
   handleInsights,
+  handleInsightsInventory,
   isLoading,
 }) => {
   const options = (value = '') => {
@@ -83,6 +85,30 @@ const ConfigParams = ({
           options(configParams?.host_registration_insights)}
         </FormSelect>
       </FormGroup>
+      <FormGroup
+        label={__('Setup Insights Inventory')}
+        fieldId="registration_setup_insights_inventory"
+        labelIcon={
+          <LabelIcon
+            text={__(
+              'If set to `Yes`, Insights data about this host will be included in the scheduled report generation and upload or via a manual run of the action. The inherited value is based on the `host_registraton_insights_inventory` parameter. It can be inherited e.g. from host group, operating system, organization. When overridden, the selected value will be stored on host parameter level.'
+            )}
+          />
+        }
+      >
+        <FormSelect
+          ouiaId="registration_setup_insights_inventory"
+          value={setupInsightsInventory}
+          onChange={v => handleInsightsInventory(v)}
+          className="without_select2"
+          id="registration_setup_insights_inventory"
+          isDisabled={isLoading}
+          isRequired
+        >
+          {/* eslint-disable-next-line camelcase */
+          options(configParams?.host_registraton_insights_inventory)}
+        </FormSelect>
+      </FormGroup>
     </>
   );
 };
@@ -91,8 +117,10 @@ ConfigParams.propTypes = {
   configParams: PropTypes.object,
   setupRemoteExecution: PropTypes.string.isRequired,
   setupInsights: PropTypes.string.isRequired,
+  setupInsightsInventory: PropTypes.string.isRequired,
   handleRemoteExecution: PropTypes.func.isRequired,
   handleInsights: PropTypes.func.isRequired,
+  handleInsightsInventory: PropTypes.func.isRequired,
   isLoading: PropTypes.bool.isRequired,
 };
 

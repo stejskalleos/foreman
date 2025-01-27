@@ -74,6 +74,7 @@ class RegistrationCommandsControllerTest < ActionController::TestCase
 
       before do
         CommonParameter.where(name: 'host_registration_insights').destroy_all
+        CommonParameter.where(name: 'host_registraton_insights_inventory').destroy_all
         CommonParameter.where(name: 'setup_remote_execution').destroy_all
       end
 

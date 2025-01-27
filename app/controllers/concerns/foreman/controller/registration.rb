@@ -37,6 +37,7 @@ module Foreman::Controller::Registration
       hostgroup: hostgroup,
       operatingsystem: operatingsystem,
       setup_insights: ActiveRecord::Type::Boolean.new.deserialize(params['setup_insights']),
+      setup_insights_inventory: ActiveRecord::Type::Boolean.new.deserialize(params['setup_insights_inventory']),
       setup_remote_execution: ActiveRecord::Type::Boolean.new.deserialize(params['setup_remote_execution']),
       packages: params['packages'],
       update_packages: params['update_packages'],
@@ -113,6 +114,7 @@ module Foreman::Controller::Registration
     clean_host_params
 
     setup_host_param('host_registration_insights', params['setup_insights'])
+    setup_host_param('host_registraton_insights_inventory', params['setup_insights_inventory'])
     setup_host_param('host_registration_remote_execution', params['setup_remote_execution'])
     setup_host_param('host_packages', params['packages'], 'string')
     setup_host_param('host_update_packages', params['update_packages'])
@@ -120,7 +122,7 @@ module Foreman::Controller::Registration
 
   def clean_host_params
     names = ['host_registration_insights', 'host_registration_remote_execution',
-             'host_packages', 'host_update_packages']
+             'host_packages', 'host_update_packages', 'host_registraton_insights_inventory']
 
     HostParameter.where(host: @host, name: names).destroy_all
   end

@@ -11,7 +11,9 @@ const Advanced = ({
   configParams,
   setupRemoteExecution,
   setupInsights,
+  setupInsightsInventory,
   handleInsights,
+  handleInsightsInventory,
   handleRemoteExecution,
   jwtExpiration,
   handleJwtExpiration,
@@ -29,7 +31,9 @@ const Advanced = ({
       configParams={configParams}
       setupRemoteExecution={setupRemoteExecution}
       setupInsights={setupInsights}
+      setupInsightsInventory={setupInsightsInventory}
       handleInsights={handleInsights}
+      handleInsightsInventory={handleInsightsInventory}
       handleRemoteExecution={handleRemoteExecution}
       isLoading={isLoading}
     />
@@ -62,7 +66,9 @@ Advanced.propTypes = {
   configParams: PropTypes.object,
   setupRemoteExecution: PropTypes.string,
   setupInsights: PropTypes.string,
+  setupInsightsInventory: PropTypes.string,
   handleInsights: PropTypes.func.isRequired,
+  handleInsightsInventory: PropTypes.func.isRequired,
   handleRemoteExecution: PropTypes.func.isRequired,
   jwtExpiration: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   handleJwtExpiration: PropTypes.func.isRequired,
@@ -80,6 +86,7 @@ Advanced.defaultProps = {
   configParams: {},
   setupRemoteExecution: '',
   setupInsights: '',
+  setupInsightsInventory: '',
   jwtExpiration: 4,
   packages: '',
   updatePackages: false,

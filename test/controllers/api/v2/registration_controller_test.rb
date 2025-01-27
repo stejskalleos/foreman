@@ -301,6 +301,36 @@ class Api::V2::RegistrationControllerTest < ActionController::TestCase
       end
     end
 
+    context 'setup_insights_inventory' do
+      test 'without param' do
+        params = { setup_insights_inventory: '' }.merge(host_params)
+        post :host, params: params, session: set_session_user
+        assert_response :success
+
+        host = Host.find_by(name: params[:host][:name]).reload
+        assert_nil HostParameter.find_by(host: host, name: 'host_registraton_insights_inventory')
+      end
+
+      test 'with setup_insights_inventory = true' do
+        params = { setup_insights_inventory: 'true' }.merge(host_params)
+        post :host, params: params, session: set_session_user
+        assert_response :success
+
+        host = Host.find_by(name: params[:host][:name]).reload
+        assert HostParameter.find_by(host: host, name: 'host_registraton_insights_inventory').value
+      end
+
+      test 'with setup_insights_inventory = false' do
+        params = { setup_insights_inventory: 'false' }.merge(host_params)
+
+        post :host, params: params, session: set_session_user
+        assert_response :success
+
+        host = Host.find_by(name: params[:host][:name]).reload
+        refute HostParameter.find_by(host: host, name: 'host_registraton_insights_inventory').value
+      end
+    end
+
     context 'setup_remote_execution' do
       test 'without param' do
         params = { setup_remote_execution: '' }.merge(host_params)

@@ -13,6 +13,7 @@ module Api
         param :operatingsystem_id, :number, desc: N_("ID of the Operating System to register the host in. Operating system must have a `host_init_config` template assigned")
         param :smart_proxy_id, :number, desc: N_("ID of the Smart Proxy. This Proxy must have enabled both the 'Templates' and 'Registration' features")
         param :setup_insights, :bool, desc: N_("Set 'host_registration_insights' parameter for the host. If it is set to true, insights client will be installed and registered on Red Hat family operating systems")
+        param :setup_insights_inventory, :bool, desc: N_("Set 'host_registration_insights_inventory' parameter for the host. If it is set to true, insights data about the host will be uploaded to console.redhat.com during report generation")
         param :setup_remote_execution, :bool, desc: N_("Set 'host_registration_remote_execution' parameter for the host. If it is set to true, SSH keys will be installed on the host")
         param :jwt_expiration, :number, desc: N_("Expiration of the authorization token (in hours), 0 means 'unlimited'.")
         param :insecure, :bool, desc: N_("Enable insecure argument for the initial curl/wget")

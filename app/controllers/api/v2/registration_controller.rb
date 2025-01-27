@@ -24,6 +24,7 @@ module Api
       param :operatingsystem_id, :number, desc: N_("ID of the Operating System to register the host in. Takes precedence over the `operatingsystem` parameter")
       param :operatingsystem, String, desc: N_("Title of the Operating System to register the host in")
       param :setup_insights, :bool, desc: N_("Set 'host_registration_insights' parameter for the host. If it is set to true, insights client will be installed and registered on Red Hat family operating systems")
+      param :setup_insights_inventory, :bool, desc: N_("Set 'host_registration_insights_inventory' parameter for the host. If it is set to true, insights data about the host will be uploaded to console.redhat.com during report generation")
       param :setup_remote_execution, :bool, desc: N_("Set 'host_registration_remote_execution' parameter for the host. If it is set to true, SSH keys will be installed on the host")
       param :packages, String, desc: N_("Packages to install on the host when registered. Can be set by `host_packages` parameter, example: `pkg1 pkg2`")
       param :update_packages, :bool, desc: N_("Update all packages on the host")
@@ -85,6 +86,7 @@ module Api
         end
       end
       param :setup_insights, :bool, desc: N_("Set 'host_registration_insights' parameter for the host. If it is set to true, insights client will be installed and registered on Red Hat family operating systems")
+      param :setup_insights_inventory, :bool, desc: N_("Set 'host_registration_insights_inventory' parameter for the host. If it is set to true, insights data about the host will be uploaded to console.redhat.com during report generation")
       param :setup_remote_execution, :bool, desc: N_("Set 'host_registration_remote_execution' parameter for the host. If it is set to true, SSH keys will be installed on the host")
       def host
         begin

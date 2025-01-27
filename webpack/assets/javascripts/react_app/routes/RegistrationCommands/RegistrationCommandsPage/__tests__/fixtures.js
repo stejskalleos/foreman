@@ -29,7 +29,9 @@ export const advancedComponentProps = {
   configParams: {},
   setupRemoteExecution: '',
   setupInsights: '',
+  setupInsightsInventory: '',
   handleInsights: () => {},
+  handleInsightsInventory: () => {},
   handleRemoteExecution: () => {},
   jwtExpiration: '',
   handleJwtExpiration: () => {},
@@ -59,8 +61,10 @@ export const configParamsProps = {
   configParams: {},
   setupRemoteExecution: '',
   setupInsights: '',
+  setupInsightsInventory: '',
   handleRemoteExecution: () => {},
   handleInsights: () => {},
+  handleInsightsInventory: () => {},
   isLoading: false,
 };
 

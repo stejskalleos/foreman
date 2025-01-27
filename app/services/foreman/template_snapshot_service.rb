@@ -79,6 +79,7 @@ module Foreman
         "subscription_manager_org" => "Org",
         "activation_key" => "key",
         "host_registration_insights" => "true",
+        "host_registraton_insights_inventory" => "true",
         "syspurpose_role" => "Red Hat Enterprise Linux Server",
         "syspurpose_usage" => "Development/Test",
         "syspurpose_sla" => "Self-Support",

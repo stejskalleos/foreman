@@ -89,6 +89,7 @@ const RegistrationCommandsPage = () => {
   const [insecure, setInsecure] = useState(false);
   const [setupRemoteExecution, setSetupRemoteExecution] = useState('');
   const [setupInsights, setSetupInsights] = useState('');
+  const [setupInsightsInventory, setSetupInsightsInventory] = useState('');
   const [jwtExpiration, setJwtExpiration] = useState(4);
   const [packages, setPackages] = useState('');
   const [updatePackages, setUpdatePackages] = useState(false);
@@ -132,6 +133,7 @@ const RegistrationCommandsPage = () => {
       insecure,
       setupRemoteExecution,
       setupInsights,
+      setupInsightsInventory,
       jwtExpiration,
       packages,
       repoData,
@@ -315,7 +317,9 @@ const RegistrationCommandsPage = () => {
                   configParams={configParams}
                   setupRemoteExecution={setupRemoteExecution}
                   setupInsights={setupInsights}
+                  setupInsightsInventory={setupInsightsInventory}
                   handleInsights={setSetupInsights}
+                  handleInsightsInventory={setSetupInsightsInventory}
                   handleRemoteExecution={setSetupRemoteExecution}
                   jwtExpiration={jwtExpiration}
                   handleJwtExpiration={setJwtExpiration}
