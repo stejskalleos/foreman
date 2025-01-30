@@ -67,6 +67,10 @@ apt-get -y update
 
 <% end -%>
 
+#
+# HERE YOU CAN PUT THE LOGIC FOR setup_insights_inventory
+#
+
 <% if plugin_present?('katello') -%>
 if command -v subscription-manager &>/dev/null; then
   echo "Refreshing subscription data"

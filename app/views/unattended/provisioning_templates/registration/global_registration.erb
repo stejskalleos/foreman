@@ -25,6 +25,7 @@ export LC_ALL=C LANG=C
 <%= "\n# Host group: [#{@hostgroup.title}]" if @hostgroup -%>
 <%= "\n# Operating system: [#{@operatingsystem}]" if @operatingsystem -%>
 <%= "\n# Setup Insights: [#{@setup_insights}]" unless @setup_insights.nil? -%>
+<%= "\n# setup_insights_inventory: [#{@setup_insights_inventory}]" unless @setup_insights_inventory.nil? -%>
 <%= "\n# Setup remote execution: [#{@setup_remote_execution}]" unless @setup_remote_execution.nil? -%>
 <%= "\n# Setup remote execution pull: [#{@setup_remote_execution_pull}]" unless @setup_remote_execution_pull.nil? -%>
 <%= "\n# Remote execution interface: [#{@remote_execution_interface}]" if @remote_execution_interface.present? -%>
@@ -119,6 +120,7 @@ register_host() {
   params << "host[operatingsystem_id]=#{@operatingsystem.id}" if @operatingsystem
   params << "host[interfaces_attributes][0][identifier]=#{shell_escape(@remote_execution_interface)}" if @remote_execution_interface.present?
   params << "setup_insights=#{@setup_insights}" unless @setup_insights.nil?
+  params << "setup_insights_inventory=#{@setup_insights_inventory}" unless @setup_insights_inventory.nil?
   params << "setup_remote_execution=#{@setup_remote_execution}" unless @setup_remote_execution.nil?
   params << "remote_execution_interface=#{shell_escape(@remote_execution_interface)}" if @remote_execution_interface.present?
   params << "packages=#{shell_escape(@packages)}" if @packages.present?
@@ -141,6 +143,7 @@ register_katello_host(){
   params << "host[hostgroup_id]=#{@hostgroup.id}" if @hostgroup
   params << "host[lifecycle_environment_id]=#{@lifecycle_environment_id}" if @lifecycle_environment_id.present?
   params << "setup_insights=#{@setup_insights}" unless @setup_insights.nil?
+  params << "setup_insights_inventory=#{@setup_insights_inventory}" unless @setup_insights_inventory.nil?
   params << "setup_remote_execution=#{@setup_remote_execution}" unless @setup_remote_execution.nil?
   params << "remote_execution_interface=#{shell_escape(@remote_execution_interface)}" if @remote_execution_interface.present?
   params << "setup_remote_execution_pull=#{@setup_remote_execution_pull}" unless @setup_remote_execution_pull.nil?
