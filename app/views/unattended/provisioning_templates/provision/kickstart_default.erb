@@ -344,8 +344,11 @@ The last post section halts Anaconda to prevent endless loop in case HTTP reques
 <%= snippet 'eject_cdrom' -%>
 
 if test -f /tmp/foreman_built; then
-  echo "calling home: build is done!"
-  <%= indent(2, skip1: true, skip_content: 'EOF') { snippet('built', :variables => { :endpoint => 'built', :method => 'POST', :body_file => '/root/install.post.log' }) } -%>
+  <%= save_to_file('/root/foreman_first_boot_script.sh', snippet('first_boot_script')) -%>
+  <%= save_to_file('/etc/systemd/system/foreman_first_boot.service', snippet('first_boot_service')) -%>
+
+  chmod 0700 /root/foreman_first_boot_script.sh
+  systemctl enable first_boot_service
 else
   echo "calling home: build failed!"
   <%= indent(2, skip1: true, skip_content: 'EOF') { snippet('built', :variables => { :endpoint => 'failed', :method => 'POST', :body_file => '/root/install.post.log' }) } -%>

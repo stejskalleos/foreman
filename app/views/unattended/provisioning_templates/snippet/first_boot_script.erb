@@ -1,0 +1,10 @@
+<%#
+kind: snippet
+name: first_boot_script
+model: ProvisioningTemplate
+snippet: true
+description: |
+  Script to run on first boot of the host.
+  Executed by the Foreman first boot service.
+-%>
+<%= indent(2, skip1: true, skip_content: 'EOF') { snippet('built', :variables => { :endpoint => 'built', :method => 'POST', :body_file => '/root/install.post.log' }) } -%>

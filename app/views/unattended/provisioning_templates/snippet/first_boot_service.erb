@@ -1,0 +1,21 @@
+<%#
+kind: snippet
+name: first_boot_service
+model: ProvisioningTemplate
+snippet: true
+description: |
+  First boot service for Foreman callback.
+  This service runs a script on the first boot of the Foreman host.
+-%>
+[Unit]
+Description=Foreman first boot service
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+ExecStart=/bin/bash /root/foreman_first_boot_script.sh
+Type=oneshot
+ExecStartPost=/usr/bin/systemctl disable foreman_first_boot_service
+
+[Install]
+WantedBy=multi-user.target
