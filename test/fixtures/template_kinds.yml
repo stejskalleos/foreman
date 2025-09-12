@@ -34,3 +34,7 @@ registration:
 public:
   name: public
   description: description for public template
+
+netboot:
+  name: netboot
+  description: description for netboot template

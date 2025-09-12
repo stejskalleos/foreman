@@ -120,6 +120,11 @@ Foreman::SettingManager.define(:foreman) do
       description: N_("Default 'Host initial configuration' template, automatically assigned when a new operating system is created"),
       default: 'Linux host_init_config default',
       full_name: N_("Default 'Host initial configuration' template"))
+    setting('default_netboot_template',
+      type: :string,
+      description: N_("Default 'Netboot Kickstart' template, automatically assigned when a new operating system (Red Hat family) is created"),
+      default: 'Netboot Kickstart default',
+      full_name: N_("Default 'Netboot Kickstart' template"))
     setting('ct_location',
       type: :string,
       description: N_("Full path to CoreOS transpiler (ct)"),

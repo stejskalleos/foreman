@@ -42,7 +42,7 @@ class Operatingsystem < ApplicationRecord
 
   before_validation :set_family
 
-  after_create :assign_init_config_template
+  after_create :assign_init_config_template, :assign_netboot_template
 
   default_scope -> { order(:title) }
 
@@ -409,6 +409,20 @@ class Operatingsystem < ApplicationRecord
     template_name = Setting[:default_host_init_config_template]
     template_kind = TemplateKind.unscoped.find_by(name: 'host_init_config')
     template = ProvisioningTemplate.unscoped.find_by(name: template_name, template_kind: template_kind)
+    return unless template
+
+    template.operatingsystems << self
+    OsDefaultTemplate.create(template_kind: template_kind, provisioning_template: template, operatingsystem: self)
+  end
+
+  # TODO: Tests
+  def assign_netboot_template
+    return if family != "Redhat"
+
+    template_name = Setting[:default_netboot_template]
+    template_kind = TemplateKind.unscoped.find_by(name: 'netboot')
+    template = ProvisioningTemplate.unscoped.find_by(name: template_name, template_kind: template_kind)
+
     return unless template
 
     template.operatingsystems << self

@@ -24,6 +24,7 @@ class TemplateKind < ApplicationRecord
       "cloud-init" => N_("Cloud-init template"),
       "host_init_config" => N_("Host initial configuration template"),
       "registration" => N_("Registration template"),
+      "netboot" => N_("Netboot template"),
       "kexec" => N_("Discovery Kexec"),
       "Bootdisk" => N_("Boot disk"),
       "public" => N_("Templates accessible publicly"),
@@ -44,6 +45,7 @@ class TemplateKind < ApplicationRecord
       "cloud-init" => N_("Template for cloud-init unattended endpoint."),
       "host_init_config" => N_("Contains the instructions in form of a bash script for the initial host configuration, after the host is registered in Foreman"),
       "public" => N_("Templates from this category can be accessed publicly using the /unattended endpoint."),
+      "netboot" => N_("Template for image based provistioning with NetBoot images."),
     }
   end
 

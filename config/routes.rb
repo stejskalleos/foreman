@@ -463,6 +463,7 @@ Foreman::Application.routes.draw do
   get 'status', to: 'home#status', as: "status"
 
   # get only for alterator unattended scripts
+  get 'unattended/netboot/:os_id', controller: 'unattended', action: 'netboot', format: 'text'
   get 'unattended/provision/:metadata', controller: 'unattended', action: 'host_template', format: 'text',
     constraints: { metadata: /(autoinstall\.scm|vm-profile\.scm|pkg-groups\.tar)/ }
   # built call can be done both via GET (for backward compatibility) and POST

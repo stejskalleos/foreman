@@ -1,0 +1,116 @@
+<%#
+kind: netboot
+name: Netboot Kickstart default
+model: ProvisioningTemplate
+oses:
+- AlmaLinux
+- CentOS
+- CentOS_Stream
+- Fedora
+- RedHat
+- Rocky
+test_on:
+- rhel9_dhcp
+- rocky9_dhcp
+description: |
+  The inital Netboot Kickstart provisioning template for kickstart based distributions.
+  The main purpose of this template is to keep the installer waiting for the host
+  to be ready (in build mode), and then to download the provisioning kickstart file.
+-%>
+<%
+  # This does not respect the templates url from smart proxy
+  url = foreman_url('provision')
+  interval = host_param('netboot_interval', 5)
+  max_attempts = host_param('netboot_max_attempts', 360)
+-%>
+%pre --interpreter=/bin/bash
+
+# Redirect all output of this script to TTY3 for live debugging.
+# Also tee the output to a log file for later inspection.
+exec < /dev/tty3 > /dev/tty3
+chvt 3
+(
+
+FOREMAN_URL="<%= url %>"
+INTERVAL=<%= interval %>
+MAX_ATTEMPTS=<%= max_attempts %>
+
+echo "--- Starting Foreman Kickstart Pre-Script ---"
+echo "Adding Foreman CA certificate to the system trust store..."
+mkdir -p /etc/pki/ca-trust/source/anchors/
+# The path /run/install/repo/ is where the installer mounts the boot ISO content.
+cp /run/install/repo/foreman_files/foreman_ca.pem /etc/pki/ca-trust/source/anchors/
+update-ca-trust extract
+echo "CA trust store updated."
+
+# TODO: Anaconda might have some check where network must be up before running KS
+echo "Waiting for network interface with a default route..."
+interface=""
+for i in {1..10}; do
+    interface=$(ip route | awk '/default/ {print $5; exit}')
+    if [ -n "$interface" ]; then
+        echo "Found default interface: $interface"
+        break
+    fi
+    echo "No default route found yet. Retrying in 2 seconds..."
+    sleep 2
+done
+
+if [ -z "$interface" ]; then
+    echo "Error: Could not determine network interface after several retries. Exiting."
+    exit 1
+fi
+
+mac=$(cat /sys/class/net/$interface/address)
+rhn_header="X-RHN-Provisioning-MAC-0: $interface $mac"
+echo "Identified MAC address: $mac"
+
+count=0
+while [ $count -lt $MAX_ATTEMPTS ]; do
+    echo "Attempt $((count+1)) of $MAX_ATTEMPTS: Polling Foreman at $FOREMAN_URL..."
+
+    http_code=$(curl -s -w "%{http_code}" \
+        -H "$rhn_header" \
+        -o /tmp/host.ks \
+        "${FOREMAN_URL}/unattended/provision")
+
+    case "$http_code" in
+        200)
+            echo "Success: Received 200 OK. Kickstart file downloaded to /tmp/host.ks."
+            if [ -s /tmp/host.ks ]; then
+                break
+            else
+                echo "Warning: Received 200 OK but the kickstart file is empty. Retrying..."
+            fi
+            ;;
+        404)
+            echo "Host with MAC $mac not found in Foreman. Check Foreman's 'Hosts' page."
+            ;;
+        405)
+            echo "Host with MAC $mac found, but it is not in build mode. Please enable 'Build Mode' in Foreman."
+            ;;
+        *)
+            echo "Received unexpected HTTP status code: $http_code. Retrying..."
+            ;;
+    esac
+
+    count=$((count+1))
+    echo "Retrying in $INTERVAL seconds..."
+    sleep $INTERVAL
+done
+
+if [ $count -eq $MAX_ATTEMPTS ]; then
+    echo "Error: Maximum attempts reached. Failed to download kickstart from Foreman."
+    echo "Failed to fetch kickstart after $MAX_ATTEMPTS attempts." > /tmp/ks-fetch-error.log
+    exit 1
+fi
+
+echo "--- Pre-Script Finished Successfully. Switching back to Anaconda ---"
+chvt 1
+) 2>&1 | tee /tmp/pre-script.log
+
+%end
+
+# Warning: Included template skips the %pre blocks.
+# https://pykickstart.readthedocs.io/en/latest/kickstart-docs.html#id72
+%include /tmp/host.ks

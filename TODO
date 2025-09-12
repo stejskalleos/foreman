@@ -1,0 +1,5 @@
+- Token authorization
+- host params for extending the template (interval, max_attemts)
+- Test the netboot template
+  - Test the time params
+  - Check the chvt if it is working well

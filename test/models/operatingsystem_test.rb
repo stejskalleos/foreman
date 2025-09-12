@@ -451,6 +451,12 @@ class OperatingsystemTest < ActiveSupport::TestCase
     assert_equal Setting[:default_host_init_config_template], os.provisioning_templates[0]&.name
   end
 
+  test "should assign 'Netboot Kickstart default' template for Redhat family" do
+    os = FactoryBot.create(:operatingsystem, family: 'Redhat')
+    assert_includes os.provisioning_templates, templates(:netboot)
+  end
+
+
   context 'has_default_template?' do
     setup do
       @kind = TemplateKind.find_by(name: 'host_init_config')

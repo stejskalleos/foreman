@@ -743,4 +743,47 @@ class UnattendedControllerTest < ActionController::TestCase
       end
     end
   end
+
+  context "NetBoot" do
+    let(:os) { FactoryBot.create(:rhel9, :with_provision) }
+    let(:host) { FactoryBot.create(:host, :managed, :with_build, operatingsystem: os) }
+    let(:content) { "<%= @host.operatingsystem.major %>.<%= @host.operatingsystem.minor %>" }
+    let(:template) { FactoryBot.create(:provisioning_template, template_kind: TemplateKind.find_by(name: 'netboot'), name: 'netboot-test', template: content) }
+
+    it "render template for OS" do
+      template.os_default_templates.create(operatingsystem: os, template_kind_id: template.template_kind_id)
+
+      get :netboot, params: { os_id: os.id }
+      assert_response :success
+      assert_equal os.release, @response.body
+    end
+
+    it "fail without assigned template" do
+      get :netboot, params: { os_id: os.id }
+      assert_response :not_found
+    end
+
+    it "render provisioning template directly if host is in build mode" do
+      ptable = FactoryBot.create(:ptable, :name => 'default',
+                            :operatingsystem_ids => [operatingsystems(:redhat).id])
+      media(:one).organizations << @org
+      media(:one).locations << @loc
+      host = FactoryBot.create(:host, :managed, :with_dhcp_orchestration, :build => true,
+                                    :operatingsystem => operatingsystems(:redhat),
+                                    :ptable => ptable,
+                                    :medium => media(:one),
+                                    :architecture => architectures(:x86_64),
+                                    :organization => @org,
+                                    :location => @loc
+      )
+
+      @request.env["HTTP_X_RHN_PROVISIONING_MAC_0"] = "eth1 #{host.mac}"
+      @request.env["REMOTE_ADDR"] = host.provision_interface.ip
+
+      get :netboot, params: { os_id: os.id }
+      assert_response :success
+      # We rendered some other template
+      refute_equal os.release, @response.body
+    end
+  end
 end

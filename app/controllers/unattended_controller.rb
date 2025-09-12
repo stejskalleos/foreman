@@ -11,7 +11,7 @@ class UnattendedController < ApplicationController
 
   before_action :permissions_check, if: -> { preview? }, only: [:host_template, :hostgroup_template]
   before_action :set_admin_user, unless: -> { preview? }
-  before_action :load_host_details, only: [:host_template, :built, :failed]
+  before_action :load_host_details, only: [:host_template, :built, :failed, :netboot]
 
   # all of our requests should be returned in text/plain
   after_action :set_content_type
@@ -69,6 +69,23 @@ class UnattendedController < ApplicationController
     (handle_realm || return) if kind == 'provision'
 
     render_provisioning_template(kind)
+  end
+
+  def netboot
+    # If the host is ready for provisioning (build: true),
+    # skip the netboot template and render the provisioning template.
+    return render_provisioning_template('provision') if @host
+
+    os = Operatingsystem.find(params[:os_id])
+    @host = Host.new(operatingsystem: os)
+
+    unless @host.provisioning_template(kind: 'netboot')
+      # TODO: Maybe we could return shell script with echo & exit 1
+      logger.warn "No default netboot template found for OS #{os.name}"
+      return head(:not_found)
+    end
+
+    render_provisioning_template('netboot')
   end
 
   private

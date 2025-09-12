@@ -154,6 +154,13 @@ host_init_config:
   locked: true
   type: ProvisioningTemplate
 
+netboot:
+  name: Netboot Kickstart default
+  template: 'echo "Netboot Kickstart default"'
+  template_kind: netboot
+  locked: true
+  type: ProvisioningTemplate
+
 foreman_ca_refresh:
   name: foreman_ca_refresh
   template: 'echo "Refreshing certificates"'
