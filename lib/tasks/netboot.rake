@@ -1,6 +1,7 @@
 # TODO: Selinux, where to put the input/output files?
 # TODO: Output should be in a temporary directory(?)
 # TODO: Test on a real machine
+# TODO: Authentication token
 
 namespace :netboot do
   desc <<~END_DESC
