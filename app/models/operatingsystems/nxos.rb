@@ -6,7 +6,7 @@ class NXOS < Operatingsystem
     ["POAP"]
   end
 
-  def available_loaders
+  def default_loaders
     ["None"]
   end
 

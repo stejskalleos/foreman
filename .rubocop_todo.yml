@@ -443,6 +443,7 @@ Rails/HasAndBelongsToMany:
     - 'app/models/ptable.rb'
     - 'app/models/taxonomies/location.rb'
     - 'app/models/taxonomies/organization.rb'
+    - 'app/models/bootloader.rb'
 
 # Offense count: 43
 # Configuration parameters: Include.

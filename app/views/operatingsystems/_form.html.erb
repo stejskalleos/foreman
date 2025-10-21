@@ -4,6 +4,7 @@
     <li class="active"><a href="#primary" data-toggle="tab"><%= _("Operating System") %></a></li>
     <li><a href="#ptable" data-toggle="tab"><%= _("Partition Table") %></a></li>
     <li><a href="#media" data-toggle="tab"><%= _("Installation Media") %></a></li>
+    <li><a href="#bootloaders" data-toggle="tab"><%= _("Bootloaders") %></a></li>
     <li><a href="#templates" data-toggle="tab"><%= _("Templates") %></a></li>
     <% if authorized_for(:controller => "host_editing", :action => "view_params") %>
       <li><a href="#params" data-toggle="tab" id="params-tab"><%= _("Parameters") %></a></li>
@@ -33,6 +34,11 @@
     </div>
     <div class="tab-pane" id="media">
       <%= multiple_checkboxes f, :media, @operatingsystem,   os_habtm_family(Medium, f.object), :label => _("Installation Media") %>
+    </div>
+    <div class="tab-pane" id="bootloaders">
+    TODO: Show this only for existing.
+    Automatically assign after create.
+      <%= multiple_checkboxes f, :bootloaders, @operatingsystem, Bootloader.all, :label => _("Available Bootloaders"), :help_inline => _("Select which bootloaders are available for this operating system") %>
     </div>
     <% if authorized_for(:controller => "host_editing", :action => "view_params") %>
       <div class="tab-pane" id="params">

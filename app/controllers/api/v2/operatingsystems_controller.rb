@@ -56,6 +56,7 @@ module Api
           param :provisioning_template_ids, Array, :desc => N_("IDs of associated provisioning templates")
           param :medium_ids, Array, :desc => N_("IDs of associated media")
           param :ptable_ids, Array, :desc => N_("IDs of associated partition tables")
+          param :bootloader_ids, Array, :desc => N_("IDs of associated bootloaders")
         end
       end
 

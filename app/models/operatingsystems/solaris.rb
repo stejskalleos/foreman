@@ -19,7 +19,7 @@ class Solaris < Operatingsystem
     "jumpstart"
   end
 
-  def available_loaders
+  def default_loaders
     ["None"]
   end
 

@@ -18,6 +18,7 @@ class Operatingsystem < ApplicationRecord
   has_and_belongs_to_many :ptables, :join_table => :operatingsystems_ptables, :foreign_key => :operatingsystem_id, :association_foreign_key => :ptable_id
   has_and_belongs_to_many :architectures
   has_and_belongs_to_many :provisioning_templates, :join_table => :operatingsystems_provisioning_templates, :foreign_key => :operatingsystem_id, :association_foreign_key => :provisioning_template_id
+  has_and_belongs_to_many :bootloaders, :join_table => :operatingsystem_bootloaders, :foreign_key => :operatingsystem_id, :association_foreign_key => :bootloader_id
   has_many :os_default_templates, :dependent => :destroy
   accepts_nested_attributes_for :os_default_templates, :allow_destroy => true,
     :reject_if => :reject_empty_provisioning_template
@@ -43,6 +44,7 @@ class Operatingsystem < ApplicationRecord
   before_validation :set_family
 
   after_create :assign_init_config_template
+  after_create :assign_default_bootloaders
 
   default_scope -> { order(:title) }
 
@@ -189,8 +191,12 @@ class Operatingsystem < ApplicationRecord
     [major, minor]
   end
 
-  # Implemented only in the OSs subclasses where it makes sense
   def available_loaders
+    bootloaders.pluck(:name)
+  end
+
+  # Default bootloaders for operating systems that can be associated with
+  def default_loaders
     ["None", "PXELinux BIOS"]
   end
 
@@ -413,5 +419,11 @@ class Operatingsystem < ApplicationRecord
 
     template.operatingsystems << self
     OsDefaultTemplate.create(template_kind: template_kind, provisioning_template: template, operatingsystem: self)
+  end
+
+  def assign_default_bootloaders
+    default_loaders.each do |loader|
+      bootloaders << Bootloader.find_by(name: loader)
+    end
   end
 end

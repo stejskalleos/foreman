@@ -19,7 +19,8 @@ module Foreman::Controller::Parameters::Operatingsystem
           :os_default_templates_attributes => [os_default_template_params_filter],
           :os_parameters_attributes => [parameter_params_filter(OsParameter)],
           :provisioning_templates => [], :provisioning_template_names => [], :provisioning_template_ids => [],
-          :ptable_ids => [], :ptable_names => []
+          :ptable_ids => [], :ptable_names => [],
+          :bootloader_ids => [], :bootloader_names => []
       end
     end
   end

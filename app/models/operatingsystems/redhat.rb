@@ -16,7 +16,7 @@ class Redhat < Operatingsystem
     end
   end
 
-  def available_loaders
+  def default_loaders
     self.class.all_loaders
   end
 
