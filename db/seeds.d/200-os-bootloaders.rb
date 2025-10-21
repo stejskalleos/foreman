@@ -1,5 +1,5 @@
 names = [
-  "None",
+  # "None",
   "PXELinux BIOS",
   "PXELinux UEFI",
   "Grub2 BIOS",

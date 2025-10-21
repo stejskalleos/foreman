@@ -1,0 +1,13 @@
+- Cleanup old codebase
+- What if I want to add a new bootloader?
+- PXE file mapping
+- "None" bootloader - it should be used only when bootloaders.empty?
+
+- Managing OS
+  Create
+    - should not allow to select bootloaders
+    - automatically assign default bootloaders
+  Edit
+    - should allow to select bootloaders
+    - should not allow to select bootloaders that are not available for the OS family
+    - ^^ the list of available bootloaders should be filtered by the OS family
