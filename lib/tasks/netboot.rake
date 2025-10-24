@@ -19,6 +19,7 @@ namespace :netboot do
     @image_path = ENV['IMAGE_PATH']
     @output_path = ENV['OUTPUT_PATH']
     @os = Operatingsystem.find(ENV['OS_ID'])
+    # @user = User.find_by(login: ENV['USER_LOGIN'])
     @smart_proxy = SmartProxy.find(ENV['SMART_PROXY_ID']) if ENV['SMART_PROXY_ID'].present?
 
     check!
@@ -58,6 +59,8 @@ namespace :netboot do
     raise "Output path is required" if @output_path.blank?
     raise("Output path #{@output_path} already exists") if File.exist?(@output_path)
 
+    # raise "User not found!" unless @user
+
     if @smart_proxy
       @smart_proxy.has_feature?('Templates') || raise("Smart proxy #{@smart_proxy.name} does not have the Templates feature")
     end
@@ -79,13 +82,25 @@ namespace :netboot do
 
   private
 
-  def mkksiso_c_attrs
-    ks_url = if @smart_proxy
-      "#{@smart_proxy.url}/unattended/netboot/#{@os.id}"
-    else
-      "#{Setting[:foreman_url]}/unattended/netboot/#{@os.id}"
-    end
+  def ks_url
+    path = "unattended/netboot/#{@os.id}?auth_token=#{auth_token}"
 
+    if @smart_proxy
+      "#{@smart_proxy.url}/#{path}"
+    else
+      "#{Setting[:foreman_url]}/#{path}"
+    end
+  end
+
+  def auth_token
+    jwt_args = {
+      scope: [{ controller: :unattended, actions: [:netboot] }],
+    }
+
+    @user.jwt_token!(**jwt_args)
+  end
+
+  def mkksiso_c_attrs
     "ip=dhcp inst.ks=#{ks_url} inst.ks.sendmac inst.cmdline"
   end
 
